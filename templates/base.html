@@ -24,12 +24,12 @@
                 <div class="website-navbar">
                     <div class="header-triangle"></div>
                     <div class="navbar">
-                        <button class="navbar-btn">Strona Główna</button>
-                        <button class="navbar-btn">Moje Budżety</button>
-                        <button class="navbar-btn">FAQ</button>
-                        <button class="navbar-btn-login">Zarejestruj</button>
-                        <button class="navbar-btn-login">Zaloguj</button>
-                        <button class="navbar-btn-login">Moje konto</button>
+                        <form class="navbar-btn-form"><button class="navbar-btn" type="submit" formaction="{{ url_for('index') }}">Strona Główna</button></form>
+                        <form class="navbar-btn-form"><button class="navbar-btn" type="submit" formaction="{{ url_for('my_budgets') }}">Moje Budżety</button></form>
+                        <form class="navbar-btn-form"><button class="navbar-btn" type="submit" formaction="">FAQ</button></form>
+                        <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="">Zarejestruj</button></form>
+                        <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="">Zaloguj</button></form>
+                        <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="">Moje konto</button></form>
                         
                     </div>
                 </div>

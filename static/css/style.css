@@ -98,6 +98,18 @@ h6 {
     padding-right: 20px;
 }
 
+.navbar-btn-form, .navbar-btn-form-login {
+    height: 100%;
+}
+
+.navbar-btn-form {
+    float: left;
+}
+
+ .navbar-btn-form-login {
+    float: right;
+ }
+
 .navbar-btn, .navbar-btn-login {
     background-color: #16302B; 
     color:#FFFFFF;
@@ -107,17 +119,10 @@ h6 {
     padding: 0px 20px;
 }
 
-.navbar-btn {
-    float: left;
-}
-
 .navbar-btn:hover {
     background-color: #F2B202;
-    color:#16302B
-}
-
-.navbar-btn-login {
-    float: right;
+    color:#16302B;
+    cursor: pointer;
 }
 
 .navbar-btn-login:hover {
