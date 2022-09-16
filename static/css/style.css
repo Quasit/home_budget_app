@@ -10,6 +10,7 @@ body {
 
 a {
     color: #F53D00;
+    text-decoration: none;
 }
 
 h1,
@@ -68,13 +69,21 @@ h6 {
 
 .website-logotype {
     background-color: #F2B202;
-    text-align: center;
     width: 25%;
+    max-height: 70px;
     position: relative;
-    padding: 20px 20px;
+    padding: 5px 20px;
+    display: inline-flex;
+}
+
+.website-name {
+    text-align: center;
+    margin: auto 20px;
+    width: calc(100% - 120px);
 }
 
 .website-navbar {
+    background-color: #16302B;
     position: relative;
     width: 75%;
     height: 70px;
@@ -127,7 +136,8 @@ h6 {
 
 .navbar-btn-login:hover {
     background-color: #F53D00;
-    color: #16302B
+    color: #16302B;
+    cursor: pointer;
 }
 
 .content {

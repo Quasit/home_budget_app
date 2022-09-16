@@ -19,7 +19,8 @@
         <div class="wrapper">
             <div class="header">
                 <div class="website-logotype">
-                    <h1>DOMOWY BUDŻET</h1>
+                    <a href="{{ url_for('index') }}"><img src="../static/images/logo_60x60.png"></a>
+                    <div class="website-name"><a href="{{ url_for('index') }}"><h1>DOMOWY BUDŻET</h1></a></div>
                 </div>
                 <div class="website-navbar">
                     <div class="header-triangle"></div>
@@ -40,7 +41,9 @@
         </div>
         <div class="footer">
             <div class="footer-content">
-                @Footer
+                <div style="display:inline">
+                    <a href="{{ url_for('index') }}"><img src="../static/images/logo_60x60.png" style="width:30px; height: 30px; vertical-align: middle;"></a> @Footer
+                </div>
             </div>
         </div>
     </body>
