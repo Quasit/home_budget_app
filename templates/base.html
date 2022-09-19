@@ -7,10 +7,11 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
+        <title>Domowy Budżet</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="../static/css/style.css" />
+        <link rel="icon" type="image/x-icon" href="../static/images/favicon.png">
     </head>
     <body>
         <!--[if lt IE 7]>
@@ -27,7 +28,7 @@
                     <div class="navbar">
                         <form class="navbar-btn-form"><button class="navbar-btn" type="submit" formaction="{{ url_for('index') }}">Strona Główna</button></form>
                         <form class="navbar-btn-form"><button class="navbar-btn" type="submit" formaction="{{ url_for('my_budgets') }}">Moje Budżety</button></form>
-                        <form class="navbar-btn-form"><button class="navbar-btn" type="submit" formaction="">FAQ</button></form>
+                        <form class="navbar-btn-form"><button class="navbar-btn" type="submit" formaction="{{ url_for('testing') }}">TEST</button></form>
                         <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="">Zarejestruj</button></form>
                         <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="">Zaloguj</button></form>
                         <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="">Moje konto</button></form>
