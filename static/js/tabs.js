@@ -9,5 +9,6 @@ function switch_period(evt, period) {
         tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
     document.getElementById(period).style.display = "block";
-    evt.currentTarget.className += " active";
+    evt.currentTarget.className += " active";   
 }
+document.getElementById("defaultOpen").click();

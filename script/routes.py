@@ -21,3 +21,7 @@ def budget(id: int):
 @app.route('/testing')
 def testing():
     return render_template('testing.html')
+
+@app.route('/test')
+def test():
+    return render_template('test.html')

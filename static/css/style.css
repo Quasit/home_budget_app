@@ -5,7 +5,7 @@ body {
     color: #16302B;
     font-size: 15px;
     font-family: 'Roboto', sans-serif;
-    margin: 0px;;
+    margin: 0px;
 }
 
 a {
@@ -53,6 +53,43 @@ h6 {
 
 li {
     margin-bottom: 10px;  
+}
+
+table {
+    min-width: 80%;
+    border: none;
+    border-spacing: 0px;
+    border-collapse:collapse;
+}
+
+tr, td {
+    border: none;
+}
+
+tr.first-row td {
+    background: #FF5016
+}
+
+tr:hover {
+    background-color: #F2B202;
+}
+
+tr:hover td {
+    background-color: #F2B202;
+    /* or #000 */
+}
+
+tr:nth-child(even) {
+    background: #FFF;
+}
+
+tr:nth-child(odd) {
+    background: #CCC;
+}
+
+hr {
+    color: #16302B;
+    border: 1px solid #16302B;
 }
 
 .wrapper {
@@ -200,44 +237,49 @@ li {
     border-right: 2px solid #16302B;
 }
 
-
-
+.budget-summary-table {
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
 
  /* Style the tab */
  .tab {
-    overflow: hidden;
-    background-color: #f1f1f1;
-    margin: auto;
-    width: 100%;
-    display: flex;
-    justify-content: center;
+     overflow: hidden;
+     background-color: #f1f1f1;
+     margin: auto;
+     width: 100%;
+     display: flex;
+     justify-content: center;
  }
+
  /* Style the buttons that are used to open the tab content */
  .tab button {
-    background-color: inherit;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 14px 16px;
-    transition: 0.3s;
+     background-color: inherit;
+     border: none;
+     outline: none;
+     cursor: pointer;
+     padding: 14px 16px;
+     transition: 0.3s;
  }
 
  /* Change background color of buttons on hover */
  .tab button:hover {
-    background-color: #f2b2028c;
+     background-color: #f2b2028c;
  }
 
  /* Create an active/current tablink class */
  .tab button.active {
-    background-color: #F2B202;
+     background-color: #F2B202;
  }
 
  /* Style the tab content */
  .tabcontent {
-    display: grid;
-    width: 100%;
-    padding-top: 12px;
-    animation: fadeEffect 1s;
+     display: grid;
+     width: 100%;
+     padding-top: 12px;
+     animation: fadeEffect 1s;
  }
 
  /* Go from zero to full opacity */
@@ -250,3 +292,16 @@ li {
          opacity: 1;
      }
  }
+
+.test-content-parent {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.test-content {
+background-color: #FFFFFF;
+width: 100%;
+height: 100%;
+min-height: 400px;
+}
