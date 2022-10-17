@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i');
 
+/* --------- BASIC STYLES --------- */
+
 body {
     background-color: #16302B;
     color: #16302B;
@@ -55,38 +57,6 @@ li {
     margin-bottom: 10px;  
 }
 
-table {
-    min-width: 80%;
-    border: none;
-    border-spacing: 0px;
-    border-collapse:collapse;
-}
-
-tr, td {
-    border: none;
-}
-
-tr.first-row td {
-    background: #FF5016
-}
-
-tr:hover {
-    background-color: #F2B202;
-}
-
-tr:hover td {
-    background-color: #F2B202;
-    /* or #000 */
-}
-
-tr:nth-child(even) {
-    background: #FFF;
-}
-
-tr:nth-child(odd) {
-    background: #CCC;
-}
-
 hr {
     color: #16302B;
     border: 1px solid #16302B;
@@ -97,6 +67,8 @@ hr {
     position: relative;
 }
 
+/* --------- HEADER AND NAVBAR STYLES --------- */
+
 .header {
     position: sticky;
     display:inline-flex;
@@ -104,6 +76,9 @@ hr {
     margin: 0px;
     width: 100%;
     height: 70px;
+    min-height: 70px;
+    max-height: 70px;
+    min-width: fit-content;
     z-index: 99;
     border-bottom: 5px solid #F2B202;
 }
@@ -146,6 +121,7 @@ hr {
     margin-left: 70px;
     padding-left: 20px;
     padding-right: 20px;
+    overflow: auto;
 }
 
 .navbar-btn-form, .navbar-btn-form-login {
@@ -181,6 +157,13 @@ hr {
     cursor: pointer;
 }
 
+.navbar-btn:active {
+    background-color: #F2B202;
+}
+
+
+/* --------- BASIC CONTENT STYLES --------- */
+
 .content {
     background-color: #FFFFFF;
     color: #16302B;
@@ -194,6 +177,12 @@ hr {
     border-radius: 25px;
     min-height: 390px;
 }
+
+.flashes {
+    color: red;
+}
+
+/* --------- FOOTER STYLES --------- */
 
 .footer {
     background-color: #F2B202;
@@ -213,9 +202,164 @@ hr {
     
 }
 
+/* --------- REGISTER AND LOGIN STYLES --------- */
+
+.register_wrapper {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    min-height: 300px;
+    flex-direction: column;
+}
+
+.register_form_table {
+    color: #16302B;
+    font-size: 18px;
+    justify-content: center;
+    display: flex;
+}
+
+.register_form_table table {
+    border-spacing: 10px;
+    border-collapse: separate;
+}
+
+.register_form_table tr {
+}
+
+.register_form_table td {
+    text-align: end;
+}
+
+.register_form_table tr.register_errors td {
+    color: red;
+    text-align: center;
+    word-wrap: break-word;
+    font-size: 12px;
+    max-width: 140px;
+}
+
+.register_form input[type=submit]{
+    padding: 10px;
+    background-color: #F2B202;
+    color: #16302B;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.register_form input[type=submit]:hover {
+    background-color: #f2b2028c;
+}
+
+.register_form input[type=text] {
+    border: none;
+    background-color: #16302B;
+    font-size: 18px;
+    color: #FFFFFF;
+    padding: 4px 10px;
+}
+
+.register_form input[type=text]:hover {
+    background-color: #F2B202;
+}
+
+.register_form input[type=password] {
+    border: none;
+    background-color: #16302B;
+    font-size: 18px;
+    color: #FFFFFF;
+    padding: 4px 10px;
+}
+.register_form input[type=password]:hover {
+    background-color: #F2B202;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #16302B inset !important;
+}
+
+
+
+.login_wrapper {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    min-height: 300px;
+    flex-direction: column;
+}
+
+.login_form_table {
+    color: #16302B;
+    font-size: 18px;
+    justify-content: center;
+    display: flex;
+}
+
+.login_form_table table {
+    border-spacing: 10px;
+    border-collapse: separate;
+}
+
+.login_form_table tr {}
+
+.login_form_table td {
+    text-align: end;
+}
+
+.login_form_table tr.login_errors td {
+    color: red;
+    text-align: center;
+    word-wrap: break-word;
+    font-size: 12px;
+    max-width: 140px;
+}
+
+.login_form_table input[type=submit] {
+    padding: 10px;
+    background-color: #F2B202;
+    color: #16302B;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.login_form_table input[type=submit]:hover {
+    background-color: #f2b2028c;
+}
+
+.login_form_table input[type=text] {
+    border: none;
+    background-color: #16302B;
+    font-size: 18px;
+    color: #FFFFFF;
+    padding: 4px 10px;
+}
+
+.login_form_table input[type=text]:hover {
+    background-color: #F2B202;
+}
+
+.login_form_table input[type=password] {
+    border: none;
+    background-color: #16302B;
+    font-size: 18px;
+    color: #FFFFFF;
+    padding: 4px 10px;
+}
+
+.login_form_table input[type=password]:hover {
+    background-color: #F2B202;
+}
+
+
+/* --------- BUDGET OVERVIEW STYLES --------- */
+
 .budget-content-wrapper {
     width: 100%;
-    border-top: 2px solid #16302B;
     margin-top: 10px;
     display: block;
 }
@@ -224,6 +368,46 @@ hr {
     display: table;
     width: 100%;
 }
+
+.budget-header {
+    min-height: auto;
+    width: 100%;
+    display: table;
+    
+}
+
+.budget-name {
+    width: auto;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.budget-menu {
+    width: auto;
+    height: 40px;
+    position: relative;
+    display: table-cell;
+}
+
+.budget-menu-form {
+    height: 100%;
+    margin: 0px 4px;
+    float: right;
+}
+
+.budget-menu-btn {
+    background-color: #F2B202;
+    border: none;
+    height: 100%;
+    outline: none;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.budget-menu-btn:hover {
+    background-color: #F53D00;
+}
+
 
 .budget-balance-summary, .budget-expenses-summary, .budget-income-summary {
     display: table-cell;
@@ -237,6 +421,55 @@ hr {
     border-right: 2px solid #16302B;
 }
 
+ /* Style the tab */
+ .tab {
+    overflow: hidden;
+    background-color: #f1f1f1;
+    margin: auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+ }
+
+ /* Style the buttons that are used to open the tab content */
+ .tab button {
+    background-color: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+ }
+
+ /* Change background color of buttons on hover */
+ .tab button:hover {
+    background-color: #f2b2028c;
+ }
+
+ /* Create an active/current tablink class */
+ .tab button.active {
+    background-color: #F2B202;
+ }
+
+ /* Style the tab content */
+ .tabcontent {
+    display: grid;
+    width: 100%;
+    padding-top: 12px;
+    animation: fadeEffect 1s;
+ }
+
+ /* Go from zero to full opacity */
+ @keyframes fadeEffect {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
 .budget-summary-table {
     width: 100%;
     margin-top: 20px;
@@ -244,64 +477,80 @@ hr {
     justify-content: center;
 }
 
- /* Style the tab */
- .tab {
-     overflow: hidden;
-     background-color: #f1f1f1;
-     margin: auto;
-     width: 100%;
-     display: flex;
-     justify-content: center;
- }
+.budget-summary-table table {
+    min-width: 80%;
+    border: none;
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
 
- /* Style the buttons that are used to open the tab content */
- .tab button {
-     background-color: inherit;
-     border: none;
-     outline: none;
-     cursor: pointer;
-     padding: 14px 16px;
-     transition: 0.3s;
- }
-
- /* Change background color of buttons on hover */
- .tab button:hover {
-     background-color: #f2b2028c;
- }
-
- /* Create an active/current tablink class */
- .tab button.active {
-     background-color: #F2B202;
- }
-
- /* Style the tab content */
- .tabcontent {
-     display: grid;
-     width: 100%;
-     padding-top: 12px;
-     animation: fadeEffect 1s;
- }
-
- /* Go from zero to full opacity */
- @keyframes fadeEffect {
-     from {
-         opacity: 0;
-     }
-
-     to {
-         opacity: 1;
-     }
- }
-
-.test-content-parent {
-    width: 100%;
-    height: 100%;
+.budget-summary-table tr,
+.budget-summary-table td {
     border: none;
 }
 
-.test-content {
-background-color: #FFFFFF;
-width: 100%;
-height: 100%;
-min-height: 400px;
+.budget-summary-table tr.first-row td {
+    background: #FF5016
+}
+
+.budget-summary-table tr:hover {
+    background-color: #F2B202;
+}
+
+.budget-summary-table tr:hover td {
+    background-color: #F2B202;
+}
+
+.budget-summary-table tr:nth-child(even) {
+    background: #FFF;
+}
+
+.budget-summary-table tr:nth-child(odd) {
+    background: #CCC;
+}
+
+/* --------- BUDGET EXPENSES PAGE STYLES --------- */
+
+.budget-expenses-table-wrapper {
+    width: 100%;
+    margin: 20px 0px;
+}
+
+.expenses-table {
+    min-width: 100%;
+    border: none;
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+
+.expenses-table table {
+    min-width: 80%;
+    border: none;
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+
+.expenses-table tr,
+.expenses-table td {
+    border: none;
+}
+
+.expenses-table tr.first-row td {
+    background: #FF5016
+}
+
+.expenses-table tr:hover {
+    background-color: #F2B202;
+}
+
+.expenses-table tr:hover td {
+    background-color: #F2B202;
+}
+
+.expenses-table tr:nth-child(even) {
+    background: #FFF;
+}
+
+.expenses-table tr:nth-child(odd) {
+    background: #CCC;
 }

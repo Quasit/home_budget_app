@@ -10,8 +10,8 @@
         <title>Domowy Budżet</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="../static/css/style.css" />
-        <link rel="icon" type="image/x-icon" href="../static/images/favicon.png">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.png') }}">
     </head>
     <body>
         <!--[if lt IE 7]>
@@ -20,7 +20,7 @@
         <div class="wrapper">
             <div class="header">
                 <div class="website-logotype">
-                    <a href="{{ url_for('index') }}"><img src="../static/images/logo_60x60.png"></a>
+                    <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='images/logo_60x60.png') }}"></a>
                     <div class="website-name"><a href="{{ url_for('index') }}"><h1>DOMOWY BUDŻET</h1></a></div>
                 </div>
                 <div class="website-navbar">
@@ -29,9 +29,13 @@
                         <form class="navbar-btn-form"><button class="navbar-btn" type="submit" formaction="{{ url_for('index') }}">Strona Główna</button></form>
                         <form class="navbar-btn-form"><button class="navbar-btn" type="submit" formaction="{{ url_for('my_budgets') }}">Moje Budżety</button></form>
                         <form class="navbar-btn-form"><button class="navbar-btn" type="submit" formaction="{{ url_for('testing') }}">TEST</button></form>
-                        <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="">Zarejestruj</button></form>
-                        <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="">Zaloguj</button></form>
+                        {% if current_user.is_anonymous %}
+                        <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="{{ url_for('register') }}">Zarejestruj</button></form>
+                        <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="{{ url_for('login') }}">Zaloguj</button></form>
+                        {% else %}
                         <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="">Moje konto</button></form>
+                        <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="{{ url_for('logout') }}">Wyloguj</button></form>
+                        {% endif %}
                         
                     </div>
                 </div>
@@ -43,7 +47,7 @@
         <div class="footer">
             <div class="footer-content">
                 <div style="display:inline">
-                    <a href="{{ url_for('index') }}"><img src="../static/images/logo_60x60.png" style="width:30px; height: 30px; vertical-align: middle;"></a> @Footer
+                    <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='images/logo_60x60.png') }}" style="width:30px; height: 30px; vertical-align: middle;"></a> @Footer
                 </div>
             </div>
         </div>

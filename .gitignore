@@ -1,4 +1,6 @@
 .venv
 .vscode
 script/__pycache__
+script/add_db_data
 templates/testing.html
+budget_database.db

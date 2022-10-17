@@ -1,7 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Example budget name {{ id }}</h1>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../static/js/chart.js"></script>
+
 <div class="budget-content-wrapper">
+    <div class="budget-header">
+        <div class="budget-name">
+            <h1>Example budget name {{ id }}</h1>
+        </div>
+        <div class="budget-menu">
+            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('expenses', id=id ) }}">Wydatki</button></form>
+            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('budget', id=id ) }}">Podsumowanie</button></form>
+        </div>
+    </div>
+    <hr style="margin-bottom: 0;">
     <div class="tab">
         <button class="tablinks" onclick="switch_period(event, 'current_month')" id="defaultOpen">Bieżący miesiąc</button>
         <button class="tablinks" onclick="switch_period(event, 'current_year')">Bieżący rok</button>
@@ -33,7 +45,7 @@
             <div class="budget-expenses-summary">
                 <b>Wydatki</b>
                 <div class="budget-summary-table">
-                    <table>
+                    <table class="budget table">
                         <tr class="first-row">
                             <td><b>SUMA:</b></td>
                             <td>1000zł</td>
@@ -64,7 +76,7 @@
             <div class="budget-income-summary">
                 <b>Przychody</b>
                 <div class="budget-summary-table">
-                    <table>
+                    <table class="budget table">
                         <tr class="first-row">
                             <td><b>SUMA:</b></td>
                             <td>2000zł</td>
@@ -72,6 +84,13 @@
                     </table>
                 </div>
             </div>
+        </div>
+        <hr>
+        <div class="chart-container" style="position: relative; height:600px; width:100%; margin: auto;">
+            <canvas id="chart_current_month"></canvas>
+            <script>
+                buildChart("chart_current_month")
+            </script>
         </div>
     </div>
     
@@ -141,6 +160,13 @@
                 </div>
             </div>
         </div>
+        <hr>
+        <div class="chart-container" style="position: relative; height:600px; width:100%; margin: auto;">
+            <canvas id="chart_current_year"></canvas>
+            <script>
+                buildChart("chart_current_year")
+            </script>
+        </div>
     </div>
     
     <div id="one_year_period" class="tabcontent">
@@ -209,10 +235,15 @@
                 </div>
             </div>
         </div>
+        <hr>
+        <div class="chart-container" style="position: relative; height:600px; width:100%; margin: auto;">
+            <canvas id="chart_one_year_period"></canvas>
+            <script>
+                buildChart("chart_one_year_period")
+            </script>
+        </div>
     </div>
 
     <script src="../static/js/tabs.js"></script>
 </div>
-
-
 {% endblock %}

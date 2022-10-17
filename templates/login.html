@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="login_wrapper">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <p class="flashes">
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+    </p>
+    {% endif %}
+    {% endwith %}
+    <div class="login_form_table">
+        <form action="" method="post" class="login_form">
+            {{ form.hidden_tag() }}
+            <table>
+                <tr>
+                    <td>{{ form.username.label }}</td>
+                    <td>{{ form.username(size=32) }}</td>
+                </tr>
+                {% for error in form.username.errors %}
+                <tr class="login_errors">
+                    <td></td>
+                    <td>{{ error }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td>{{ form.password.label }}</td>
+                    <td>{{ form.password(size=32) }}</td>
+                </tr>
+                {% for error in form.password.errors %}
+                <tr class="login_errors">
+                    <td></td>
+                    <td>{{ error }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="2" style="text-align: center;">{{ form.submit() }}</td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+{%endblock%}

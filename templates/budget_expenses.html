@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="budget-content-wrapper">
+    <div class="budget-header">
+        <div class="budget-name">
+            <h1>Example budget name {{ id }}</h1>
+        </div>
+        <div class="budget-menu">
+            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('expenses', id=id ) }}">Wydatki</button></form>
+            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('budget', id=id ) }}">Podsumowanie</button></form>
+        </div>
+    </div>
+    <hr style="margin-bottom: 0;"/>
+    <div class="budget-expenses-table-wrapper">
+        <table class="expenses-table">
+            <tr class="first-row">
+                <td><b>LP:</b></td>
+                <td><b>Data:</b></td>
+                <td><b>Kategoria:</b></td>
+                <td><b>Nazwa:</b></td>
+                <td><b>Kwota:</b></td>
+                <td><b>Kto wydał:</b></td>
+                <td><b>Kto używa:</b></td>
+            </tr>
+            <tr>
+                <td>1.</td>
+                <td>01.01.2022</td>
+                <td>Jedzenie</td>
+                <td>Zakupy</td>
+                <td>1000zł</td>
+                <td>Michał</td>
+                <td>Wszyscy</td>
+            </tr>
+            <tr>
+                <td>2.</td>
+                <td>04.01.2022</td>
+                <td>Rachunki</td>
+                <td>Rachunki Prąd</td>
+                <td>1000zł</td>
+                <td>Michał</td>
+                <td>Wszyscy</td>
+            </tr>
+        </table>
+    </div>
+    <hr />
+</div>
+{% endblock %}
