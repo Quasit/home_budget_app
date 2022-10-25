@@ -355,6 +355,356 @@ input:-webkit-autofill:active {
     background-color: #F2B202;
 }
 
+.login_form_table input[type=checkbox] {
+    visibility: hidden;
+    display: block;
+    height: 20px;
+    width: 20px;
+    position: absolute;
+    overflow: hidden;
+}
+
+.login_checkbox span {
+    height: 20px;
+    width: 20px;
+    border: 2px solid #16302B;
+    display: inline-block;
+    position: relative;
+    background-color:#16302B;
+    color: #CCC;
+}
+
+[type=checkbox]:checked + span::before {
+    content: '\2714';
+    position: absolute;
+    top: -2px;
+    left: 3px;
+    background-color: #16302B;
+    color: #CCC;
+}
+
+[type=checkbox]:hover + span {
+    background-color: #F2B202;
+    border: 2px solid #F2B202;
+}
+
+[type=checkbox]:hover+span::before {
+    background-color: #F2B202;
+}
+
+[type=checkbox]:hover+span::after {
+    background-color: #F2B202;
+    border: 2px solid #F2B202;
+}
+
+/* --------- ADD BUDGET STYLES --------- */
+
+.add_budget_wrapper {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    min-height: 300px;
+    flex-direction: column;
+}
+
+.add_budget_form_table {
+    color: #16302B;
+    font-size: 18px;
+    justify-content: center;
+    display: flex;
+}
+
+.add_budget_form_table table {
+    border-spacing: 10px;
+    border-collapse: separate;
+}
+
+.add_budget_form_table tr {
+}
+
+.add_budget_form_table td {
+    text-align: end;
+}
+
+.add_budget_form_table tr.add_budget_errors td {
+    color: red;
+    text-align: center;
+    word-wrap: break-word;
+    font-size: 12px;
+    max-width: 140px;
+}
+
+.add_budget_form input[type=submit]{
+    padding: 10px;
+    background-color: #F2B202;
+    color: #16302B;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.add_budget_form input[type=submit]:hover {
+    background-color: #f2b2028c;
+}
+
+.add_budget_form input[type=text] {
+    border: none;
+    background-color: #16302B;
+    font-size: 18px;
+    color: #FFFFFF;
+    padding: 4px 10px;
+    width: 400px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.add_budget_form input[type=text]:hover {
+    background-color: #F2B202;
+}
+
+.add_budget_form #description {
+    border: none;
+    background-color: #16302B;
+    font-size: 18px;
+    color: #FFFFFF;
+    padding: 4px 10px;
+    resize: none;
+    width: 400px;
+    height: 200px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.add_budget_form #description:hover {
+    background-color: #F2B202;
+}
+
+/* --------- ADD CATEGORY STYLES --------- */
+
+.add_category_wrapper {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    min-height: 300px;
+    flex-direction: column;
+}
+
+.add_category_form_table {
+    color: #16302B;
+    font-size: 18px;
+    justify-content: center;
+    display: flex;
+}
+
+.add_category_form_table table {
+    border-spacing: 10px;
+    border-collapse: separate;
+}
+
+.add_category_form_table tr {}
+
+.add_category_form_table td {
+    text-align: end;
+}
+
+.add_category_form_table tr.add_category_errors td {
+    color: red;
+    text-align: center;
+    word-wrap: break-word;
+    font-size: 12px;
+    max-width: 140px;
+}
+
+.add_category_form input[type=submit] {
+    padding: 10px;
+    background-color: #F2B202;
+    color: #16302B;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.add_category_form input[type=submit]:hover {
+    background-color: #f2b2028c;
+}
+
+.add_category_form input[type=text] {
+    border: none;
+    background-color: #16302B;
+    font-size: 18px;
+    color: #FFFFFF;
+    padding: 4px 10px;
+    width: 400px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.add_category_form input[type=text]:hover {
+    background-color: #F2B202;
+}
+
+.add_category_form #description {
+    border: none;
+    background-color: #16302B;
+    font-size: 18px;
+    color: #FFFFFF;
+    padding: 4px 10px;
+    resize: none;
+    width: 400px;
+    height: 200px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.add_category_form #description:hover {
+    background-color: #F2B202;
+}
+
+/* --------- ADD EXPENSE STYLES --------- */
+
+.add_expense_wrapper {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    min-height: 300px;
+    flex-direction: column;
+}
+
+.add_expense_form_table {
+    color: #16302B;
+    font-size: 18px;
+    justify-content: center;
+    display: flex;
+}
+
+.add_expense_form_table table {
+    border-spacing: 10px;
+    border-collapse: separate;
+}
+
+.add_expense_form_table tr {}
+
+.add_expense_form_table td {
+    text-align: end;
+}
+
+.add_expense_form_table tr.add_expense_errors td {
+    color: red;
+    text-align: center;
+    word-wrap: break-word;
+    font-size: 12px;
+    max-width: 140px;
+}
+
+.add_expense_form input[type=submit] {
+    padding: 10px;
+    background-color: #F2B202;
+    color: #16302B;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.add_expense_form input[type=submit]:hover {
+    background-color: #f2b2028c;
+}
+
+.add_expense_form input[type=text] {
+    border: none;
+    background-color: #16302B;
+    font-size: 18px;
+    color: #FFFFFF;
+    padding: 4px 10px;
+    width: 400px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.add_expense_form input[type=text]:hover {
+    background-color: #F2B202;
+}
+
+.add_expense_form #description {
+    border: none;
+    background-color: #16302B;
+    font-size: 18px;
+    color: #FFFFFF;
+    padding: 4px 10px;
+    resize: none;
+    width: 400px;
+    height: 100px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.add_expense_form #description:hover {
+    background-color: #F2B202;
+}
+
+.add_expense_form select {
+    padding: 10px;
+    background-color: #16302B;
+    color: #FFFFFF;
+    width: 400px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.add_expense_form select option:hover {
+    background-color: #F2B202 !important;;
+}
+
+.add_expense_form input[type=number] {
+    border: none;
+    background-color: #16302B;
+    font-size: 18px;
+    color: #FFFFFF;
+    padding: 4px 10px;
+    width: 400px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    /* -moz-appearance: textfield; */
+}
+
+.add_expense_form input[type=number]:hover {
+    background-color: #F2B202;
+}
+/*
+.add_expense_form input::-webkit-outer-spin-button,
+.add_expense_form input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+} */
+
+.add_expense_form input[type=date] {
+    border: none;
+    background-color: #16302B;
+    font-size: 18px;
+    color: #FFFFFF;
+    padding: 4px 10px;
+    width: 400px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -moz-appearance: textfield;
+}
+
+.add_expense_form input[type=date]:hover {
+    background-color: #F2B202;
+}
+
+.add_expense_form input[type=date]:focus {
+    background-color: #F2B202;
+}
+
 
 /* --------- BUDGET OVERVIEW STYLES --------- */
 
@@ -510,6 +860,32 @@ input:-webkit-autofill:active {
 }
 
 /* --------- BUDGET EXPENSES PAGE STYLES --------- */
+
+.add_expense {
+    height: 40px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.add_expense_form {
+    height: 100%;
+    margin: 0px 4px;
+}
+
+.add_expense_btn {
+    background-color: #F2B202;
+    border: none;
+    height: 100%;
+    outline: none;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.add_expense_btn:hover {
+    background-color: #F53D00;
+}
+
 
 .budget-expenses-table-wrapper {
     width: 100%;

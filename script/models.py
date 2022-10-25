@@ -1,4 +1,6 @@
 from datetime import datetime
+from enum import unique
+from unicodedata import category
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from flask import request
@@ -24,3 +26,26 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+class Budget(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), index=True, unique=False)
+    description = db.Column(db.String(128), index=False, unique=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    categories = db.relationship('Category', backref='budget', lazy='dynamic', cascade='all, delete, delete-orphan')
+
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), index=True, unique=False)
+    description = db.Column(db.String(128), index=False, unique=False)
+    budget_id = db.Column(db.Integer, db.ForeignKey('budget.id'))
+    expenses = db.relationship('Expense', backref='category', lazy='dynamic', cascade='all, delete, delete-orphan')
+
+class Expense(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), index=True, unique=False)
+    description = db.Column(db.String(128), index=False, unique=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    date = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
+    amount = db.Column(db.Numeric, index=True, unique=False)
+    payer = db.Column(db.Integer, db.ForeignKey('user.id'))
+    used_by = db.relationship('User')

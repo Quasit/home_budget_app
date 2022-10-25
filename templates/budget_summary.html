@@ -6,11 +6,11 @@
 <div class="budget-content-wrapper">
     <div class="budget-header">
         <div class="budget-name">
-            <h1>Example budget name {{ id }}</h1>
+            <h1>{{ budget.name }}</h1>
         </div>
         <div class="budget-menu">
-            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('expenses', id=id ) }}">Wydatki</button></form>
-            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('budget', id=id ) }}">Podsumowanie</button></form>
+            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('expenses', budget_id=budget_id, budget=budget ) }}">Wydatki</button></form>
+            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('budget', budget_id=budget_id, budget=budget ) }}">Podsumowanie</button></form>
         </div>
     </div>
     <hr style="margin-bottom: 0;">

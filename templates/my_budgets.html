@@ -1,17 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Moje budżety</h1>
+<div class="budget-header">
+    <div class="budget-name">
+        <h1>Moje budżety</h1>
+    </div>
+    <div class="budget-menu">
+        <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('add_budget') }}">Dodaj budżet</button></form>
+    </div>
+</div>
+
 <hr>
 <ul>
+{% for budget in budgets %}
     <li>
-        <h3><a href="{{ url_for('budget', id=1) }}">Example budget name 1</a></h3>
+        <h3><a href="{{ url_for('budget', budget_id=budget.id) }}">{{ budget.name }}</a></h3>
     </li>
-    <li>
-        <h3><a href="{{ url_for('budget', id=2) }}">Example budget name 2</a></h3>
-    </li>
-    <li>
-        <h3><a href="{{ url_for('budget', id=3) }}">Example budget name 3</a></h3>
-    </li>
+{% endfor %}
 </ul>
-
 {% endblock %}

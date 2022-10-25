@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="add_category_wrapper">
+    <div class="add_category_form_table">
+        <form action="" method="post" class="add_category_form">
+            {{ form.hidden_tag() }}
+            <table>
+                <tr>
+                    <td>{{ form.name.label }}</td>
+                    <td>{{ form.name() }}</td>
+                </tr>
+                {% for error in form.name.errors %}
+                <tr class="add_category_errors">
+                    <td></td>
+                    <td>{{ error }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td>{{ form.description.label }}</td>
+                    <td>{{ form.description() }}</td>
+                </tr>
+                {% for error in form.description.errors %}
+                <tr class="add_category_errors">
+                    <td></td>
+                    <td>{{ error }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="2" style="text-align: center;">{{ form.submit() }}</td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+{%endblock%}

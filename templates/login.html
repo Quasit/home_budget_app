@@ -35,6 +35,15 @@
                 </tr>
                 {% endfor %}
                 <tr>
+                    <td colspan="2" style="text-align: center;">
+                        <label class="login_checkbox">
+                            {{ form.remember_me() }}
+                            <span onclick=""></span>
+                            {{ form.remember_me.label }}
+                        </label>
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="2" style="text-align: center;">{{ form.submit() }}</td>
                 </tr>
             </table>

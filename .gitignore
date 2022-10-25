@@ -2,5 +2,6 @@
 .vscode
 script/__pycache__
 script/add_db_data
+script/testing
 templates/testing.html
 budget_database.db
