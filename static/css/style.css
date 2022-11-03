@@ -182,6 +182,24 @@ hr {
     color: red;
 }
 
+.go_back_form {
+    height: 20px;
+    color: #16302B;
+}
+
+.go_back_btn {
+    background-color: #F2B202;
+    height: 20px;
+    color: #16302B;
+    border: none;
+    height: 100%;
+    outline: none;
+    cursor: pointer;
+}
+.go_back_btn:hover {
+    background-color: #F53D00;
+}
+
 /* --------- FOOTER STYLES --------- */
 
 .footer {
@@ -909,6 +927,7 @@ input:-webkit-autofill:active {
 .expenses-table tr,
 .expenses-table td {
     border: none;
+    cursor: default;
 }
 
 .expenses-table tr.first-row td {
@@ -929,4 +948,22 @@ input:-webkit-autofill:active {
 
 .expenses-table tr:nth-child(odd) {
     background: #CCC;
+}
+
+.remove_expense_btn {
+    background-color: #16302B;
+    color: #FFFFFF;
+    border: none;
+}
+
+.expenses-table tr.first-row:hover {
+    background-color: #FF5016;
+}
+
+.expenses-table tr.first-row:hover td {
+    background-color: #FF5016;
+}
+
+.remove_expense_btn:hover {
+    background-color: #FF5016;
 }

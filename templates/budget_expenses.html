@@ -19,32 +19,27 @@
     <div class="budget-expenses-table-wrapper">
         <table class="expenses-table">
             <tr class="first-row">
-                <td><b>LP:</b></td>
-                <td><b>Data:</b></td>
-                <td><b>Kategoria:</b></td>
-                <td><b>Nazwa:</b></td>
-                <td><b>Kwota:</b></td>
-                <td><b>Kto wydał:</b></td>
-                <td><b>Kto używa:</b></td>
+                <td style="width:5%;"><b>LP:</b></td>
+                <td style="width:10%;"><b>Data:</b></td>
+                <td style="width:10%; text-align:right; padding-right: 40px;"><b>Kwota:</b></td>
+                <td style="width:25%;"><b>Nazwa:</b></td>
+                <td style="width:15%;"><b>Kategoria:</b></td>
+                <td style="width:15%;"><b>Kto wydał:</b></td>
+                <td style="width:15%;"><b>Kto używa:</b></td>
+                <td style="width:5%;"></td>
             </tr>
+            {% for expense in expenses %}
             <tr>
-                <td>1.</td>
-                <td>01.01.2022</td>
-                <td>Jedzenie</td>
-                <td>Zakupy</td>
-                <td>1000zł</td>
-                <td>Michał</td>
-                <td>Wszyscy</td>
+                <td>{{ loop.index }}.</td>
+                <td>{{ expense["date"] }}</td>
+                <td style="text-align:right; padding-right: 40px;"><b>{{ '%.2f' %expense["amount"] }} zł</b></td>
+                <td title="{{ expense['description'] }}">{{ expense["name"] }}</td>
+                <td title="{{ expense['category_description'] }}">{{ expense["category_name"] }}</td>
+                <td>{{ expense["payer_name"] }}</td>
+                <td>{{ expense["used_by"] }}</td>
+                <td style="text-align:right; padding-right: 10px;"><form><button class="remove_expense_btn" type="submit" formaction="{{ url_for('remove_expense', budget_id=budget_id, expense_id=expense['id'] ) }}"><b>X</b></button></form></td>
             </tr>
-            <tr>
-                <td>2.</td>
-                <td>04.01.2022</td>
-                <td>Rachunki</td>
-                <td>Rachunki Prąd</td>
-                <td>1000zł</td>
-                <td>Michał</td>
-                <td>Wszyscy</td>
-            </tr>
+            {% endfor %}
         </table>
     </div>
     <hr />

@@ -4,9 +4,6 @@ from unicodedata import category
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from flask import request
-import json
-import string
-import random
 
 from main import db
 
@@ -44,8 +41,9 @@ class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), index=True, unique=False)
     description = db.Column(db.String(128), index=False, unique=False)
+    budget_id = db.Column(db.Integer, db.ForeignKey('budget.id'))
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
-    date = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
-    amount = db.Column(db.Numeric, index=True, unique=False)
+    date = db.Column(db.Date(), default=datetime.today(), index=True)
+    amount = db.Column(db.String(12), index=True, unique=False)
     payer = db.Column(db.Integer, db.ForeignKey('user.id'))
     used_by = db.relationship('User')

@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
+<div>
+    <form class="go_back_form"><button class="go_back_btn" type="submit" formaction="{{ url_for('expenses', budget_id=budget_id, budget=budget ) }}">< Wstecz</button></form>
+</div>
 <div class="add_expense_wrapper">
     <div class="add_expense_form_table">
         <form action="" method="post" class="add_expense_form">

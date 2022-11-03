@@ -1,3 +1,4 @@
+from unicodedata import decimal
 from flask import render_template, url_for, redirect, flash, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -5,6 +6,7 @@ from werkzeug.urls import url_parse
 from main import app, db, login_manager
 from models import User, Budget, Category, Expense
 from forms import RegistrationForm, LoginForm, BudgetForm, CategoryForm, ExpenseForm
+from functions import get_expenses
 
 
 @app.route('/')
@@ -51,18 +53,21 @@ def load_user(user_id):
 
 
 @app.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
 
 
 @app.route('/my_budgets')
+@login_required
 def my_budgets():
     budgets = Budget.query.all()
     return render_template('my_budgets.html', budgets=budgets)
 
-@login_required
+
 @app.route('/budget/add_budget', methods=['GET', 'POST'])
+@login_required
 def add_budget():
     form = BudgetForm()
     if form.validate_on_submit():
@@ -75,18 +80,22 @@ def add_budget():
 
 
 @app.route('/budget/<int:budget_id>')
+@login_required
 def budget(budget_id: int):
     budget = Budget.query.filter_by(id=budget_id).first()
     return render_template('budget_summary.html', budget_id=budget.id, budget=budget)
 
 
 @app.route('/budget/<int:budget_id>/expenses')
+@login_required
 def expenses(budget_id: int):
     budget = Budget.query.filter_by(id=budget_id).first()
-    return render_template('budget_expenses.html', budget_id=budget.id, budget=budget)
+    expenses = get_expenses(budget_id)
+    return render_template('budget_expenses.html', budget_id=budget.id, budget=budget, expenses=expenses, counter=0)
 
 
 @app.route('/budget/<int:budget_id>/add_expense', methods=['GET', 'POST'])
+@login_required
 def add_expense(budget_id: int):
     budget = Budget.query.filter_by(id=budget_id).first()
     form = ExpenseForm()
@@ -95,7 +104,8 @@ def add_expense(budget_id: int):
         user = User.query.filter_by(id=current_user.id).first()
         category = Category.query.filter_by(budget_id=budget_id, name=form.category.data).first()
         expense = Expense(name=form.name.data, description=form.description.data,
-                          category_id=category.id, date=form.date.data, amount=float(form.amount.data), payer=user.id, used_by=user)
+                          budget_id = budget_id, category_id=category.id, date=form.date.data, 
+                          amount=str(form.amount.data), payer=user.id, used_by=user)
         db.session.add(expense)
         db.session.commit()
         return redirect(url_for('expenses', budget_id=budget_id))
@@ -103,6 +113,7 @@ def add_expense(budget_id: int):
 
 
 @app.route('/budget/<int:budget_id>/add_category', methods=['GET', 'POST'])
+@login_required
 def add_category(budget_id: int):
     budget = Budget.query.filter_by(id=budget_id).first()
     form = CategoryForm()
@@ -112,6 +123,14 @@ def add_category(budget_id: int):
         db.session.commit()
         return redirect(url_for('expenses', budget_id=budget_id))
     return render_template('add_category.html', budget_id=budget_id, form=form)
+
+
+@app.route('/budget/<int:budget_id>/remove_expense/<int:expense_id>')
+def remove_expense(budget_id: int, expense_id: int):
+    expense_to_remove = Expense.query.filter_by(id=expense_id).first()
+    db.session.delete(expense_to_remove)
+    db.session.commit()
+    return redirect(url_for('expenses', budget_id=budget_id))
 
 
 @app.route('/testing')
