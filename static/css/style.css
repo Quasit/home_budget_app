@@ -954,6 +954,10 @@ input:-webkit-autofill:active {
     background-color: #16302B;
     color: #FFFFFF;
     border: none;
+    float: right;
+    margin-right: 10px;
+    height: 24px;
+    width: 24px;
 }
 
 .expenses-table tr.first-row:hover {

@@ -104,12 +104,39 @@ def add_expense(budget_id: int):
         user = User.query.filter_by(id=current_user.id).first()
         category = Category.query.filter_by(budget_id=budget_id, name=form.category.data).first()
         expense = Expense(name=form.name.data, description=form.description.data,
-                          budget_id = budget_id, category_id=category.id, date=form.date.data, 
+                          budget_id=budget_id, category_id=category.id, date=form.date.data,
                           amount=str(form.amount.data), payer=user.id, used_by=user)
         db.session.add(expense)
         db.session.commit()
         return redirect(url_for('expenses', budget_id=budget_id))
     return render_template('add_expense.html', budget_id=budget_id, form=form)
+
+
+@app.route('/budget/<int:budget_id>/edit_expense/<int:expense_id>', methods=['GET', 'POST'])
+@login_required
+def edit_expense(budget_id: int, expense_id: int):
+    expense = Expense.query.filter_by(id=expense_id).first()
+    form = ExpenseForm()
+    form.category.choices = form.get_categories(budget_id)
+    if form.validate_on_submit():
+        category = Category.query.filter_by(budget_id=budget_id, name=form.category.data).first()
+        expense.name = form.name.data
+        expense.description = form.description.data
+        expense.category_id = category.id
+        expense.date = form.date.data
+        expense.amount = str(form.amount.data)
+        db.session.commit()
+        return redirect(url_for('expenses', budget_id=budget_id))
+    form.submit.label.text = "Zapisz"
+    form.category.choices = form.get_categories(budget_id)
+    category = Category.query.filter_by(id=expense.category_id).first()
+    form.category.default = category.name
+    form.process()
+    form.name.data = expense.name
+    form.description.data = expense.description
+    form.amount.data = float(expense.amount)
+    form.date.data = expense.date
+    return render_template('edit_expense.html', budget_id=budget_id, form=form, expense_id=expense_id, expense=expense)
 
 
 @app.route('/budget/<int:budget_id>/add_category', methods=['GET', 'POST'])

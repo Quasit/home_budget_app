@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div>
+    <form class="go_back_form"><button class="go_back_btn" type="submit" formaction="{{ url_for('expenses', budget_id=budget_id, budget=budget ) }}">< Wstecz</button></form>
+</div>
+<div class="add_expense_wrapper">
+    <div class="add_expense_form_table">
+        <form action="" method="post" class="add_expense_form">
+            {{ form.hidden_tag() }}
+            <table>
+                <tr>
+                    <td>{{ form.name.label }}</td>
+                    <td>{{ form.name() }}</td>
+                </tr>
+                {% for error in form.name.errors %}
+                <tr class="add_expense_errors">
+                    <td></td>
+                    <td>{{ error }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td>{{ form.description.label }}</td>
+                    <td>{{ form.description() }}</td>
+                </tr>
+                {% for error in form.description.errors %}
+                <tr class="add_expense_errors">
+                    <td></td>
+                    <td>{{ error }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td>{{ form.category.label }}</td>
+                    <td>{{ form.category() }}</td>
+                </tr>
+                {% for error in form.category.errors %}
+                <tr class="add_expense_errors">
+                    <td></td>
+                    <td>{{ error }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td>{{ form.amount.label }}</td>
+                    <td>{{ form.amount(step='0.01') }}</td>
+                </tr>
+                {% for error in form.category.errors %}
+                <tr class="add_expense_errors">
+                    <td></td>
+                    <td>{{ error }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td>{{ form.date.label }}</td>
+                    <td>{{ form.date() }}</td>
+                </tr>
+                {% for error in form.date.errors %}
+                <tr class="add_expense_errors">
+                    <td></td>
+                    <td>{{ error }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="2" style="text-align: center;">{{ form.submit() }}</td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+{%endblock%}

@@ -37,7 +37,10 @@
                 <td title="{{ expense['category_description'] }}">{{ expense["category_name"] }}</td>
                 <td>{{ expense["payer_name"] }}</td>
                 <td>{{ expense["used_by"] }}</td>
-                <td style="text-align:right; padding-right: 10px;"><form><button class="remove_expense_btn" type="submit" formaction="{{ url_for('remove_expense', budget_id=budget_id, expense_id=expense['id'] ) }}"><b>X</b></button></form></td>
+                <td style="padding-right: 10px;">
+                    <form><button class="remove_expense_btn" type="submit" formaction="{{ url_for('remove_expense', budget_id=budget_id, expense_id=expense['id'] ) }}"><b>X</b></button></form>
+                    <form><button class="remove_expense_btn" type="submit" formaction="{{ url_for('edit_expense', budget_id=budget_id, expense_id=expense['id'] ) }}"><b>✎</b></button></form>
+                </td>
             </tr>
             {% endfor %}
         </table>

@@ -2,7 +2,7 @@ from logging.config import valid_ident
 from unicodedata import category, name
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, BooleanField, SelectField, DateField, DecimalField, SelectMultipleField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired
 
 from models import User, Category
 
@@ -43,8 +43,8 @@ class CategoryForm(FlaskForm):
 class ExpenseForm(FlaskForm):
     name = StringField('Nazwa', validators=[DataRequired()])
     description = TextAreaField('Opis (opcjonalne)')
-    category = SelectField('Kategoria', choices=[], validators=[DataRequired()])
-    date = DateField('Data', format='%Y-%m-%d')
+    category = SelectField('Kategoria', choices=[])
+    date = DateField('Data', format='%Y-%m-%d', validators=[DataRequired()])
     amount = DecimalField('Kwota', places=2, validators=[DataRequired()])
     #payer = SelectField('Płaci', choices=[])
     #used_by = SelectMultipleField('Używa', choices=[])
@@ -52,7 +52,5 @@ class ExpenseForm(FlaskForm):
 
     def get_categories(self, budget_id):
         categories = Category.query.filter_by(budget_id=budget_id).all()
-        category_list = []
-        for cat in categories:
-            category_list.append(cat.name)
+        category_list = [cat.name for cat in categories]
         return category_list
