@@ -582,6 +582,16 @@ input:-webkit-autofill:active {
     background-color: #F2B202;
 }
 
+.add_category_form input[type=color] {
+    border: none;
+    background-color: #16302B;
+    font-size: 18px;
+    padding: 10px;
+    resize: none;
+    width: 400px;
+    height: 50px;
+}
+
 /* --------- ADD EXPENSE STYLES --------- */
 
 .add_expense_wrapper {

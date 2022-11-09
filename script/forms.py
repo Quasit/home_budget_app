@@ -3,6 +3,8 @@ from unicodedata import category, name
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, BooleanField, SelectField, DateField, DecimalField, SelectMultipleField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired
+from wtforms.widgets import ColorInput
+from datetime import date
 
 from models import User, Category
 
@@ -38,6 +40,7 @@ class BudgetForm(FlaskForm):
 class CategoryForm(FlaskForm):
     name = StringField('Nazwa kategorii', validators=[DataRequired()])
     description = TextAreaField('Opis (opcjonalne)')
+    category_color = StringField('Kolor kategorii', widget=ColorInput())
     submit = SubmitField('Wyślij')
 
 class ExpenseForm(FlaskForm):
@@ -49,6 +52,10 @@ class ExpenseForm(FlaskForm):
     #payer = SelectField('Płaci', choices=[])
     #used_by = SelectMultipleField('Używa', choices=[])
     submit = SubmitField('Wyślij')
+
+    def validate_date(form, field):
+        if field.data > date.today():
+            raise ValidationError("Nie można użyć przyszłej daty")
 
     def get_categories(self, budget_id):
         categories = Category.query.filter_by(budget_id=budget_id).all()

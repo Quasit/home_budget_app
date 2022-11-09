@@ -2,11 +2,13 @@ from unicodedata import decimal
 from flask import render_template, url_for, redirect, flash, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
+from datetime import datetime, timedelta
+from calendar import monthrange
 
 from main import app, db, login_manager
 from models import User, Budget, Category, Expense
 from forms import RegistrationForm, LoginForm, BudgetForm, CategoryForm, ExpenseForm
-from functions import get_expenses
+from functions import get_expenses, get_default_period_dates, get_expenses_from_period, get_expense_summary, random_color
 
 
 @app.route('/')
@@ -83,7 +85,28 @@ def add_budget():
 @login_required
 def budget(budget_id: int):
     budget = Budget.query.filter_by(id=budget_id).first()
-    return render_template('budget_summary.html', budget_id=budget.id, budget=budget)
+
+    this_month_begin, this_month_end = get_default_period_dates('this_month')
+
+    this_year_begin, this_year_end = get_default_period_dates('this_year')
+
+    one_yar_period_begin, one_yar_period_end = get_default_period_dates('one_year')
+
+    expenses_summary = {}
+
+    # This month data
+    all_this_month = get_expenses_from_period(budget_id, this_month_begin, this_month_end)
+    expenses_summary["this_month"] = get_expense_summary(all_this_month)
+
+    # This year data
+    all_this_year = get_expenses_from_period(budget_id, this_year_begin, this_year_end)
+    expenses_summary["this_year"] = get_expense_summary(all_this_year)
+
+    # One year period data
+    all_one_year_period = get_expenses_from_period(budget_id, one_yar_period_begin, one_yar_period_end)
+    expenses_summary["one_year_period"] = get_expense_summary(all_one_year_period)
+
+    return render_template('budget_summary.html', budget_id=budget.id, budget=budget, expenses_summary=expenses_summary)
 
 
 @app.route('/budget/<int:budget_id>/expenses')
@@ -145,10 +168,11 @@ def add_category(budget_id: int):
     budget = Budget.query.filter_by(id=budget_id).first()
     form = CategoryForm()
     if form.validate_on_submit():
-        category = Category(name=form.name.data, description=form.description.data, budget_id=budget_id)
+        category = Category(name=form.name.data, description=form.description.data, budget_id=budget_id, color=form.category_color.data)
         db.session.add(category)
         db.session.commit()
         return redirect(url_for('expenses', budget_id=budget_id))
+    form.category_color.data = random_color()
     return render_template('add_category.html', budget_id=budget_id, form=form)
 
 

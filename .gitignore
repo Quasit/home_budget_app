@@ -5,3 +5,4 @@ script/add_db_data
 script/testing.py
 templates/testing.html
 budget_database.db
+temp.txt

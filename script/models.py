@@ -36,6 +36,7 @@ class Category(db.Model):
     description = db.Column(db.String(128), index=False, unique=False)
     budget_id = db.Column(db.Integer, db.ForeignKey('budget.id'))
     expenses = db.relationship('Expense', backref='category', lazy='dynamic', cascade='all, delete, delete-orphan')
+    color = db.Column(db.String(8), index=False, unique=False)
 
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -47,3 +48,7 @@ class Expense(db.Model):
     amount = db.Column(db.String(12), index=True, unique=False)
     payer = db.Column(db.Integer, db.ForeignKey('user.id'))
     used_by = db.relationship('User')
+
+    def __repr__(self):
+        #return f'<id: {self.id} name: {self.name}, category_id: {self.category_id}, amount: {self.amount}, date: {self.date}>'
+        return f'<id: {self.id}, date: {self.date}>'

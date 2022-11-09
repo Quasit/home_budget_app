@@ -29,6 +29,16 @@
                 </tr>
                 {% endfor %}
                 <tr>
+                    <td>{{ form.category_color.label }}</td>
+                    <td>{{ form.category_color() }}</td>
+                </tr>
+                {% for error in form.category_color.errors %}
+                <tr class="add_category_errors">
+                    <td></td>
+                    <td>{{ error }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
                     <td colspan="2" style="text-align: center;">{{ form.submit() }}</td>
                 </tr>
             </table>

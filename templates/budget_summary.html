@@ -37,7 +37,7 @@
                         </tr>
                         <tr>
                             <td>Wydatki:</td>
-                            <td>1000zł</td>
+                            <td>{{ expenses_summary['this_month']['total'] }} zł</td>
                         </tr>
                     </table>
                 </div>
@@ -48,28 +48,14 @@
                     <table class="budget table">
                         <tr class="first-row">
                             <td><b>SUMA:</b></td>
-                            <td>1000zł</td>
+                            <td>{{ expenses_summary['this_month']['total'] }} zł</td>
                         </tr>
+                        {% for key, value in expenses_summary['this_month']['categories_summary'].items() %}
                         <tr>
-                            <td>Kategoria 1:</td>
-                            <td>200zł</td>
+                            <td>{{key}}</td>
+                            <td>{{value}} zł</td>
                         </tr>
-                        <tr>
-                            <td>Kategoria 2:</td>
-                            <td>200zł</td>
-                        </tr>
-                        <tr>
-                            <td>Kategoria 3:</td>
-                            <td>200zł</td>
-                        </tr>
-                        <tr>
-                            <td>Kategoria 4:</td>
-                            <td>200zł</td>
-                        </tr>
-                        <tr>
-                            <td>Kategoria 5:</td>
-                            <td>200zł</td>
-                        </tr>
+                        {% endfor %}
                     </table>
                 </div>
             </div>
@@ -89,7 +75,7 @@
         <div class="chart-container" style="position: relative; height:600px; width:100%; margin: auto;">
             <canvas id="chart_current_month"></canvas>
             <script>
-                buildChart("chart_current_month")
+                buildChart("chart_current_month", {{ expenses_summary['this_month']['categories_labels'] | safe}}, {{ expenses_summary['this_month']['categories_dataset'] | safe }}, {{ expenses_summary['this_month']['categories_colors'] | safe }})
             </script>
         </div>
     </div>
@@ -112,7 +98,7 @@
                         </tr>
                         <tr>
                             <td>Wydatki:</td>
-                            <td>10000zł</td>
+                            <td>{{ expenses_summary['this_year']['total'] }} zł</td>
                         </tr>
                     </table>
                 </div>
@@ -123,28 +109,14 @@
                     <table>
                         <tr class="first-row">
                             <td><b>SUMA:</b></td>
-                            <td>10000zł</td>
+                            <td>{{ expenses_summary['this_year']['total'] }} zł</td>
                         </tr>
+                        {% for key, value in expenses_summary['this_year']['categories_summary'].items() %}
                         <tr>
-                            <td>Kategoria 1:</td>
-                            <td>2000zł</td>
+                            <td>{{key}}</td>
+                            <td>{{value}} zł</td>
                         </tr>
-                        <tr>
-                            <td>Kategoria 2:</td>
-                            <td>2000zł</td>
-                        </tr>
-                        <tr>
-                            <td>Kategoria 3:</td>
-                            <td>2000zł</td>
-                        </tr>
-                        <tr>
-                            <td>Kategoria 4:</td>
-                            <td>2000zł</td>
-                        </tr>
-                        <tr>
-                            <td>Kategoria 5:</td>
-                            <td>2000zł</td>
-                        </tr>
+                        {% endfor %}
                     </table>
                 </div>
             </div>
@@ -164,7 +136,7 @@
         <div class="chart-container" style="position: relative; height:600px; width:100%; margin: auto;">
             <canvas id="chart_current_year"></canvas>
             <script>
-                buildChart("chart_current_year")
+                buildChart("chart_current_year", {{ expenses_summary['this_year']['categories_labels'] | safe }}, {{ expenses_summary['this_year']['categories_dataset'] | safe }}, {{ expenses_summary['this_year']['categories_colors'] | safe }})
             </script>
         </div>
     </div>
@@ -187,7 +159,7 @@
                         </tr>
                         <tr>
                             <td>Wydatki:</td>
-                            <td>12000zł</td>
+                            <td>{{ expenses_summary['one_year_period']['total'] }} zł</td>
                         </tr>
                     </table>
                 </div>
@@ -198,28 +170,14 @@
                     <table>
                         <tr class="first-row">
                             <td><b>SUMA:</b></td>
-                            <td>12000zł</td>
+                            <td>{{ expenses_summary['one_year_period']['total'] }} zł</td>
                         </tr>
+                        {% for key, value in expenses_summary['one_year_period']['categories_summary'].items() %}
                         <tr>
-                            <td>Kategoria 1:</td>
-                            <td>2400zł</td>
+                            <td>{{key}}</td>
+                            <td>{{value}} zł</td>
                         </tr>
-                        <tr>
-                            <td>Kategoria 2:</td>
-                            <td>2400zł</td>
-                        </tr>
-                        <tr>
-                            <td>Kategoria 3:</td>
-                            <td>2400zł</td>
-                        </tr>
-                        <tr>
-                            <td>Kategoria 4:</td>
-                            <td>2400zł</td>
-                        </tr>
-                        <tr>
-                            <td>Kategoria 5:</td>
-                            <td>2400zł</td>
-                        </tr>
+                        {% endfor %}
                     </table>
                 </div>
             </div>
@@ -239,7 +197,7 @@
         <div class="chart-container" style="position: relative; height:600px; width:100%; margin: auto;">
             <canvas id="chart_one_year_period"></canvas>
             <script>
-                buildChart("chart_one_year_period")
+                buildChart("chart_one_year_period", {{ expenses_summary['one_year_period']['categories_labels'] | safe }}, {{ expenses_summary['one_year_period']['categories_dataset'] | safe }}, {{ expenses_summary['one_year_period']['categories_colors'] | safe }})
             </script>
         </div>
     </div>
