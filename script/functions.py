@@ -37,7 +37,7 @@ def get_expenses(budget_id):
             "used_by": expense.used_by.username
         }
         expenses_list.append(expense_json)
-        expenses_list.sort(key=sort_func)
+        expenses_list.sort(key=sort_func, reverse=True)
     return expenses_list
 
 
@@ -72,7 +72,7 @@ def get_expenses_from_period(budget_id= None, begin_date=None, end_date=None):
         raise Exception("At least one passed argument is not specified")
     if not isinstance(begin_date, date) or not isinstance(end_date, date):
         raise TypeError('Wrong date type, dates should be in datetime.date type')
-    expenses = db.session.query(Expense, Category).filter(Expense.date >= begin_date, Expense.date <= end_date, budget_id==budget_id).order_by(Expense.date).join(Category).all()
+    expenses = db.session.query(Expense, Category).filter_by(budget_id=budget_id).filter(Expense.date >= begin_date, Expense.date <= end_date).order_by(Expense.date).join(Category).all()
     return expenses
 
 def get_expense_summary(expense_list):
