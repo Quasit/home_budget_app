@@ -13,7 +13,7 @@
 <ul>
 {% for budget in budgets %}
     <li>
-        <h3><a href="{{ url_for('budget', budget_id=budget.id) }}">{{ budget.name }}</a></h3>
+        <h3><a href="{{ url_for('budget', budget_id=budget.id) }}">{{ budget.name }}</a> - {{ budget.description }}</h3>
     </li>
 {% endfor %}
 </ul>

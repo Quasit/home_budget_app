@@ -27,14 +27,33 @@
                     <div class="header-triangle"></div>
                     <div class="navbar">
                         <form class="navbar-btn-form"><button class="navbar-btn" type="submit" formaction="{{ url_for('index') }}">Strona Główna</button></form>
-                        <form class="navbar-btn-form"><button class="navbar-btn" type="submit" formaction="{{ url_for('my_budgets') }}">Moje Budżety</button></form>
+                        {% if current_user.is_authenticated %}
+                        <div class="navbar-dropdown">
+                            <form class="navbar-dropbtn" style="padding: 0;"><button class="navbar-dropbtn" type="submit" formaction="{{ url_for('my_budgets') }}">Moje budżety</button></form>
+                            <div class="navbar-dropdown-content">
+                                {% for budget in budgets %}
+                                <a href="{{ url_for('budget', budget_id=budget.id) }}">{{ budget.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
                         <form class="navbar-btn-form"><button class="navbar-btn" type="submit" formaction="{{ url_for('testing') }}">TEST</button></form>
                         {% if current_user.is_anonymous %}
                         <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="{{ url_for('register') }}">Zarejestruj</button></form>
                         <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="{{ url_for('login') }}">Zaloguj</button></form>
-                        {% else %}
+                        {% endif %}
+                        {% if current_user.is_authenticated %}
+                        <div class="navbar-dropdown-login">
+                            <button class="navbar-dropbtn-login" type="submit" formaction="">&#128100 {{ current_user.username }}</button>
+                            <div class="navbar-dropdown-content-login">
+                                <a href="">Moje konto</a>
+                                <a href="{{ url_for('logout') }}">Wyloguj</a>
+                            </div>
+                        </div>
+                        <!--
                         <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="">Moje konto</button></form>
                         <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="{{ url_for('logout') }}">Wyloguj</button></form>
+                         -->
                         {% endif %}
                         
                     </div>
