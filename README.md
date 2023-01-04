@@ -3,4 +3,4 @@
 Web app built on Flask.
 
 
-![Early preview picture](images/early_preview.jpeg)
+![Early preview picture](static/images/early_preview.jpeg)
