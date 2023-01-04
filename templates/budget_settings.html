@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="budget-content-wrapper">
+    <div class="budget-header">
+        <div class="budget-name">
+            <h1>{{ budget.name }}</h1>
+        </div>
+        <div class="budget-menu">
+            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('budget_settings', budget_id=budget_id, budget=budget ) }}">&#128736 Ustawienia</button></form>
+            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('expenses', budget_id=budget_id, budget=budget ) }}">&#128197 Wydatki</button></form>
+            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('budget', budget_id=budget_id, budget=budget ) }}">&#128202 Podsumowanie</button></form>
+        </div>
+    </div>
+    <hr/>
+    <div class="add_expense">
+        <form class="add_expense_form"><button class="add_expense_btn" type="submit" formaction="{{ url_for('add_category', budget_id=budget_id, budget=budget ) }}">Dodaj kategorię</button></form>
+    </div>
+    <hr style="margin-bottom: 0;" />
+    <h3>Kategorie</h3>
+    <div class="budget-expenses-table-wrapper">
+        <table class="expenses-table">
+            <tr class="first-row">
+                <td style="width:5%;"><b>Kolor:</b></td>
+                <td style="width:15%;"><b>Nazwa:</b></td>
+                <td style="width:50%;"><b>Opis:</b></td>
+                <td style="width:25%;"></td>
+            </tr>
+            {% for category in categories %}
+            <tr>
+                <td><div style="background: {{ category.color }}; min-height:20px; min-width:20px; margin:2px"></div></td>
+                <td>{{ category.name }}</td>
+                <td>{{ category.description }}</td>
+                <td style="padding-right: 10px;">
+                    <form action="{{ url_for('remove_category', budget_id=budget_id, category_id=category.id) }}" onsubmit="return confirm('UWAGA! Wraz z usunięciem katetorii, usunięte zostaną wszystkie wpisy, do których przypisana została ta kategoria!\nCzy na pewno chcesz usunąć tę kategorię?\n{{ category.name }}')"><button title="Usuń kategorię" class="remove_expense_btn" type="submit"><b>X</b></button></form>
+                    <form><button title="Edytuj kategorię" class="remove_expense_btn" type="submit" formaction="{{ url_for('edit_category', budget_id=budget_id, category_id=category.id ) }}"><b>✎</b></button></form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+</div>
+{%endblock%}

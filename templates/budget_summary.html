@@ -9,7 +9,7 @@
             <h1>{{ budget.name }}</h1>
         </div>
         <div class="budget-menu">
-            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="">&#128736 Ustawienia</button></form>
+            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('budget_settings', budget_id=budget_id, budget=budget ) }}">&#128736 Ustawienia</button></form>
             <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('expenses', budget_id=budget_id, budget=budget ) }}">&#128197 Wydatki</button></form>
             <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('budget', budget_id=budget_id, budget=budget ) }}">&#128202 Podsumowanie</button></form>
         </div>
@@ -73,12 +73,14 @@
             </div>
         </div>
         <hr>
+        {% if expenses_summary['this_month']['total'] != '0.00' %}
         <div class="chart-container" style="position: relative; height:600px; width:100%; margin: auto;">
             <canvas id="chart_current_month"></canvas>
             <script>
                 buildChart("chart_current_month", {{ expenses_summary['this_month']['categories_labels'] | safe}}, {{ expenses_summary['this_month']['categories_dataset'] | safe }}, {{ expenses_summary['this_month']['categories_colors'] | safe }})
             </script>
         </div>
+        {% endif %}
     </div>
     
     <div id="current_year" class="tabcontent">
@@ -134,12 +136,14 @@
             </div>
         </div>
         <hr>
+        {% if expenses_summary['this_year']['total'] != '0.00' %}
         <div class="chart-container" style="position: relative; height:600px; width:100%; margin: auto;">
             <canvas id="chart_current_year"></canvas>
             <script>
                 buildChart("chart_current_year", {{ expenses_summary['this_year']['categories_labels'] | safe }}, {{ expenses_summary['this_year']['categories_dataset'] | safe }}, {{ expenses_summary['this_year']['categories_colors'] | safe }})
             </script>
         </div>
+        {% endif %}
     </div>
     
     <div id="one_year_period" class="tabcontent">
@@ -195,12 +199,14 @@
             </div>
         </div>
         <hr>
+        {% if expenses_summary['one_year_period']['total'] != '0.00' %}
         <div class="chart-container" style="position: relative; height:600px; width:100%; margin: auto;">
             <canvas id="chart_one_year_period"></canvas>
             <script>
                 buildChart("chart_one_year_period", {{ expenses_summary['one_year_period']['categories_labels'] | safe }}, {{ expenses_summary['one_year_period']['categories_dataset'] | safe }}, {{ expenses_summary['one_year_period']['categories_colors'] | safe }})
             </script>
         </div>
+        {% endif %}
     </div>
 
     <script src="../static/js/tabs.js"></script>

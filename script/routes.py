@@ -170,6 +170,15 @@ def edit_expense(budget_id: int, expense_id: int):
     return render_template('edit_expense.html', budgets=budgets, budget_id=budget_id, form=form, expense_id=expense_id, expense=expense)
 
 
+@app.route('/budget/<int:budget_id>/remove_expense/<int:expense_id>')
+def remove_expense(budget_id: int, expense_id: int):
+    budgets = Budget.query.filter_by(owner_id=current_user.id).all()
+    expense_to_remove = Expense.query.filter_by(id=expense_id).first()
+    db.session.delete(expense_to_remove)
+    db.session.commit()
+    return redirect(url_for('expenses', budgets=budgets, budget_id=budget_id))
+
+
 @app.route('/budget/<int:budget_id>/add_category', methods=['GET', 'POST'])
 @login_required
 def add_category(budget_id: int):
@@ -180,18 +189,47 @@ def add_category(budget_id: int):
         category = Category(name=form.name.data, description=form.description.data, budget_id=budget_id, color=form.category_color.data)
         db.session.add(category)
         db.session.commit()
-        return redirect(url_for('expenses', budget_id=budget_id))
+        return redirect(url_for('budget_settings', budgets=budgets, budget_id=budget_id))
     form.category_color.data = random_color()
     return render_template('add_category.html', budgets=budgets, budget_id=budget_id, form=form)
 
 
-@app.route('/budget/<int:budget_id>/remove_expense/<int:expense_id>')
-def remove_expense(budget_id: int, expense_id: int):
+@app.route('/budget/<int:budget_id>/edit_category/<int:category_id>', methods=['GET', 'POST'])
+@login_required
+def edit_category(budget_id: int, category_id: int):
     budgets = Budget.query.filter_by(owner_id=current_user.id).all()
-    expense_to_remove = Expense.query.filter_by(id=expense_id).first()
-    db.session.delete(expense_to_remove)
+    budget = Budget.query.filter_by(id=budget_id).first()
+    category = Category.query.filter_by(id=category_id).first()
+    form = CategoryForm()
+    if form.validate_on_submit():
+        category.name = form.name.data
+        category.description = form.description.data
+        category.color = form.category_color.data
+        db.session.commit()
+        return redirect(url_for('budget_settings', budget_id=budget_id))
+    form.submit.label.text = "Zapisz"
+    form.process()
+    form.name.data = category.name
+    form.description.data = category.description
+    form.category_color.data = category.color
+    return render_template('edit_category.html', budgets=budgets, budget_id=budget_id, form=form)
+
+
+@app.route('/budget/<int:budget_id>/remove_category/<int:category_id>')
+def remove_category(budget_id: int, category_id: int):
+    budgets = Budget.query.filter_by(owner_id=current_user.id).all()
+    category_to_remove = Category.query.filter_by(id=category_id).first()
+    db.session.delete(category_to_remove)
     db.session.commit()
-    return redirect(url_for('expenses', budgets=budgets, budget_id=budget_id))
+    return redirect(url_for('budget_settings', budgets=budgets, budget_id=budget_id))
+
+
+@app.route('/budget/<int:budget_id>/settings')
+def budget_settings(budget_id: int):
+    budgets = Budget.query.filter_by(owner_id=current_user.id).all()
+    budget = Budget.query.filter_by(id=budget_id).first()
+    categories = Category.query.filter_by(budget_id=budget_id).all()
+    return render_template('budget_settings.html', budgets=budgets, budget=budget, budget_id=budget_id, categories=categories)
 
 
 @app.route('/testing')
