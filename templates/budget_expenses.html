@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="{{ url_for('static', filename='js/pagination.js') }}"></script>
 <div class="budget-content-wrapper">
     <div class="budget-header">
         <div class="budget-name">
@@ -16,35 +18,42 @@
         <form class="add_expense_form"><button class="add_expense_btn" type="submit" formaction="{{ url_for('add_expense', budget_id=budget_id, budget=budget ) }}">Dodaj wpis</button></form>
     </div>
     <hr style="margin-bottom: 0;" />
-    <div class="budget-expenses-table-wrapper">
-        <table class="expenses-table">
-            <tr class="first-row">
-                <td style="width:5%;"><b>LP:</b></td>
-                <td style="width:10%;"><b>Data:</b></td>
-                <td style="width:10%; text-align:right; padding-right: 40px;"><b>Kwota:</b></td>
-                <td style="width:25%;"><b>Nazwa:</b></td>
-                <td style="width:15%;"><b>Kategoria:</b></td>
-                <td style="width:15%;"><b>Kto wydał:</b></td>
-                <td style="width:15%;"><b>Kto używa:</b></td>
-                <td style="width:5%;"></td>
-            </tr>
-            {% for expense in expenses %}
-            <tr>
-                <td>{{ loop.index }}.</td>
-                <td>{{ expense["date"] }}</td>
-                <td style="text-align:right; padding-right: 40px;"><b>{{ '%.2f' %expense["amount"] }} zł</b></td>
-                <td title="{{ expense['description'] }}">{{ expense["name"] }}</td>
-                <td title="{{ expense['category_description'] }}">{{ expense["category_name"] }}</td>
-                <td>{{ expense["payer_name"] }}</td>
-                <td>{{ expense["used_by"] }}</td>
-                <td style="padding-right: 10px;">
-                    <form action="{{ url_for('remove_expense', budget_id=budget_id, expense_id=expense['id']) }}" onsubmit="return confirm('Czy na pewno chcesz usunąć ten wpis?\n{{ expense['name'] }}')"><button title="Usuń wpis" class="remove_expense_btn" type="submit"><b>X</b></button></form>
-                    <form><button title="Edytuj wpis" class="remove_expense_btn" type="submit" formaction="{{ url_for('edit_expense', budget_id=budget_id, expense_id=expense['id'] ) }}"><b>✎</b></button></form>
-                </td>
-            </tr>
-            {% endfor %}
+    <div class="budget-expenses-table-wrapper" id="budget-expenses-table-wrapper">
+        <table class="expenses-table" id="expenses-table">
+            <thead>
+                <tr class="first-row">
+                    <td style="width:5%;"><b>LP:</b></td>
+                    <td style="width:10%;"><b>Data:</b></td>
+                    <td style="width:10%; text-align:right; padding-right: 40px;"><b>Kwota:</b></td>
+                    <td style="width:25%;"><b>Nazwa:</b></td>
+                    <td style="width:15%;"><b>Kategoria:</b></td>
+                    <td style="width:15%;"><b>Kto wydał:</b></td>
+                    <td style="width:15%;"><b>Kto używa:</b></td>
+                    <td style="width:5%;"></td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{ loop.index }}.</td>
+                    <td>{{ expense["date"] }}</td>
+                    <td style="text-align:right; padding-right: 40px;"><b>{{ '%.2f' %expense["amount"] }} zł</b></td>
+                    <td title="{{ expense['description'] }}">{{ expense["name"] }}</td>
+                    <td title="{{ expense['category_description'] }}">{{ expense["category_name"] }}</td>
+                    <td>{{ expense["payer_name"] }}</td>
+                    <td>{{ expense["used_by"] }}</td>
+                    <td style="padding-right: 10px;">
+                        <form action="{{ url_for('remove_expense', budget_id=budget_id, expense_id=expense['id']) }}" onsubmit="return confirm('Czy na pewno chcesz usunąć ten wpis?\n{{ expense['name'] }}')"><button title="Usuń wpis" class="remove_expense_btn" type="submit"><b>X</b></button></form>
+                        <form><button title="Edytuj wpis" class="remove_expense_btn" type="submit" formaction="{{ url_for('edit_expense', budget_id=budget_id, expense_id=expense['id'] ) }}"><b>✎</b></button></form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
+    <script>
+        $(document).ready(buildPagination());
+    </script>
     <hr />
 </div>
 {% endblock %}

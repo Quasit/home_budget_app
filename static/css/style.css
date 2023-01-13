@@ -1023,6 +1023,10 @@ input:-webkit-autofill:active {
     border-collapse: collapse;
 }
 
+#expenses-table tbody tr {
+    display: none;
+}
+
 .expenses-table tr,
 .expenses-table td {
     border: none;
@@ -1069,4 +1073,26 @@ input:-webkit-autofill:active {
 
 .remove_expense_btn:hover {
     background-color: #FF5016;
+}
+
+.table-nav {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.table-page-butt {
+    background-color: #16302B;
+    border: none;
+    color: #CCC;
+    min-width: 20px;
+    margin: 0px 2px;
+    padding: 2px;
+}
+
+.table-page-butt:active, .table-page-butt:hover, .table-page-butt.target {
+    background-color: #F53D00;
+    color: #CCC;
+    width: 20px;
+    margin: 0px 2px;
 }
