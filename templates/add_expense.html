@@ -59,6 +59,26 @@
                 </tr>
                 {% endfor %}
                 <tr>
+                    <td>{{ form.payer.label }}</td>
+                    <td>{{ form.payer() }}</td>
+                </tr>
+                {% for error in form.payer.errors %}
+                <tr class="add_expense_errors">
+                    <td></td>
+                    <td>{{ error }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td>{{ form.used_by.label }}</td>
+                    <td>{{ form.used_by() }}</td>
+                </tr>
+                {% for error in form.used_by.errors %}
+                <tr class="add_expense_errors">
+                    <td></td>
+                    <td>{{ error }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
                     <td colspan="2" style="text-align: center;">{{ form.submit() }}</td>
                 </tr>
             </table>

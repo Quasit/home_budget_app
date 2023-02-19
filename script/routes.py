@@ -6,9 +6,9 @@ from datetime import datetime, timedelta
 from calendar import monthrange
 
 from main import app, db, login_manager
-from models import User, Budget, Category, Expense
+from models import User, Budget, Category, Expense, AllowedUsers, UsedBy
 from forms import RegistrationForm, LoginForm, BudgetForm, CategoryForm, ExpenseForm
-from functions import get_expenses, get_default_period_dates, get_expenses_from_period, get_expense_summary, random_color
+from functions import get_expenses, get_default_period_dates, get_expenses_from_period, get_expense_summary, random_color, get_allowed_users
 
 
 @app.route('/')
@@ -24,7 +24,7 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
+        user = User(username=form.username.data, email=form.email.data, virtual=False)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -79,6 +79,9 @@ def add_budget():
         user = User.query.filter_by(id=current_user.id).first()
         budget = Budget(name=form.name.data, description=form.description.data, owner_id=user.id)
         db.session.add(budget)
+        db.session.flush()
+        allowedUser = AllowedUsers(budget_id=budget.id, user_id=user.id, editor=True)
+        db.session.add(allowedUser)
         db.session.commit()
         return redirect(url_for('my_budgets'))
     return render_template('add_budget.html', form=form, budgets=budgets)
@@ -130,13 +133,20 @@ def add_expense(budget_id: int):
     budget = Budget.query.filter_by(id=budget_id).first()
     form = ExpenseForm()
     form.category.choices = form.get_categories(budget_id)
+    form.payer.choices = form.get_allowed_users_names(budget_id)
+    form.used_by.choices = form.get_allowed_users_names(budget_id)
     if form.validate_on_submit():
-        user = User.query.filter_by(id=current_user.id).first()
+        payer = User.query.filter_by(username=form.payer.data).first()
         category = Category.query.filter_by(budget_id=budget_id, name=form.category.data).first()
         expense = Expense(name=form.name.data, description=form.description.data,
                           budget_id=budget_id, category_id=category.id, date=form.date.data,
-                          amount=str(form.amount.data), payer=user.id, used_by=user)
+                          amount=str(form.amount.data), payer=payer.id)
         db.session.add(expense)
+        db.session.flush()
+        for user in form.used_by.data:
+            used_by_user = User.query.filter_by(username=user).first()
+            used_by_record = UsedBy(expense_id=expense.id, user_id=used_by_user.id)
+            db.session.add(used_by_record)
         db.session.commit()
         return redirect(url_for('expenses', budget_id=budget_id))
     return render_template('add_expense.html', budgets=budgets, budget_id=budget_id, form=form)
@@ -147,15 +157,35 @@ def add_expense(budget_id: int):
 def edit_expense(budget_id: int, expense_id: int):
     budgets = Budget.query.filter_by(owner_id=current_user.id).all()
     expense = Expense.query.filter_by(id=expense_id).first()
+    database_used_by_records = UsedBy.query.filter_by(expense_id=expense_id).all()
+    database_used_by_user_id = [record.user_id for record in database_used_by_records]
     form = ExpenseForm()
     form.category.choices = form.get_categories(budget_id)
+    form.payer.choices = form.get_allowed_users_names(budget_id)
+    form.used_by.choices = form.get_allowed_users_names(budget_id)
     if form.validate_on_submit():
+        # Expense table changes
         category = Category.query.filter_by(budget_id=budget_id, name=form.category.data).first()
         expense.name = form.name.data
         expense.description = form.description.data
         expense.category_id = category.id
         expense.date = form.date.data
         expense.amount = str(form.amount.data)
+        expense.payer = User.query.filter_by(username=form.payer.data).first().id
+        # UsedBy table changes
+        # First change username from form field to userId list
+        form_used_by_user_id = [User.query.filter_by(username=user).first().id for user in form.used_by.data]
+        # Then need to delete sql records which should be removed and update list
+        for record in database_used_by_user_id:
+            if record not in form_used_by_user_id:
+                record_to_remove = UsedBy.query.filter_by(user_id=record).first()
+                db.session.delete(record_to_remove)
+                database_used_by_user_id.remove(record)
+        # Then we need to update our
+        for record in form_used_by_user_id:
+            if record not in database_used_by_user_id:
+                new_record = UsedBy(expense_id=expense.id, user_id=record)
+                db.session.add(new_record)
         db.session.commit()
         return redirect(url_for('expenses', budget_id=budget_id))
     form.submit.label.text = "Zapisz"
@@ -167,6 +197,9 @@ def edit_expense(budget_id: int, expense_id: int):
     form.description.data = expense.description
     form.amount.data = float(expense.amount)
     form.date.data = expense.date
+    form.payer.data = User.query.get(expense.payer).username
+    used_by_list = [User.query.filter_by(id=record.user_id).first().username for record in database_used_by_records]
+    form.used_by.data = used_by_list
     return render_template('edit_expense.html', budgets=budgets, budget_id=budget_id, form=form, expense_id=expense_id, expense=expense)
 
 
@@ -174,7 +207,10 @@ def edit_expense(budget_id: int, expense_id: int):
 def remove_expense(budget_id: int, expense_id: int):
     budgets = Budget.query.filter_by(owner_id=current_user.id).all()
     expense_to_remove = Expense.query.filter_by(id=expense_id).first()
+    used_by_records = UsedBy.query.filter_by(expense_id=expense_to_remove.id).all()
     db.session.delete(expense_to_remove)
+    for record in used_by_records:
+        db.session.delete(record)
     db.session.commit()
     return redirect(url_for('expenses', budgets=budgets, budget_id=budget_id))
 

@@ -3,7 +3,7 @@ from calendar import monthrange
 from random import randint
 
 from main import db
-from models import User, Budget, Category, Expense
+from models import User, Budget, Category, Expense, AllowedUsers, UsedBy
 
 
 def sort_func(e):
@@ -20,10 +20,27 @@ def get_expenses(budget_id):
     for category in categories:
         category_dict[category.id] = [category.name, category.description]
     
+    AllowedUsers_count = len(AllowedUsers.query.filter_by(budget_id=budget_id).all())
+
     expenses = Expense.query.filter_by(budget_id=budget_id).all()
     expenses_list = []
     for expense in expenses:
-        expense_json = {
+        database_used_by_records = UsedBy.query.filter_by(expense_id=expense.id).all()
+        used_by_list = [User.query.filter_by(id=record.user_id).first().username for record in database_used_by_records]
+        used_by_list_len = len(used_by_list)
+        usedby_short = ''
+        if used_by_list_len == 1:
+            usedby_short = used_by_list[0]
+        elif used_by_list_len >= 2 and used_by_list_len < 5:
+            usedby_short = str(used_by_list_len) + ' osoby'
+        elif used_by_list_len >= 5:
+            usedby_short = str(used_by_list_len) + ' osób'
+        
+        used_by_full_description = ''
+        for name in used_by_list:
+            used_by_full_description+= name + ', '
+        used_by_full_description = used_by_full_description[:-2]
+        expense_dict = {
             "id": expense.id,
             "name": expense.name,
             "description": expense.description,
@@ -34,9 +51,10 @@ def get_expenses(budget_id):
             "amount": float(expense.amount),
             "payer_id": expense.payer,
             "payer_name": User.query.get(expense.payer).username,
-            "used_by": expense.used_by.username
+            "used_by": usedby_short,
+            "used_by_full_description": used_by_full_description
         }
-        expenses_list.append(expense_json)
+        expenses_list.append(expense_dict)
         expenses_list.sort(key=sort_func, reverse=True)
     return expenses_list
 
@@ -110,3 +128,9 @@ def get_expense_summary(expense_list):
         "categories_colors": categories_colors,
         "categories_dataset": categories_dataset
     }
+
+
+def get_allowed_users(budget_id):
+    allowed_users = AllowedUsers.query.filter_by(budget_id=budget_id).all()
+    allowed_users_list = [user.id for user in allowed_users]
+    return allowed_users_list

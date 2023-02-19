@@ -14,12 +14,14 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     joined_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
+    virtual = db.Column(db.Boolean)
+    name = db.Column(db.String(64), index=True, unique=False)
 
-    # Function to hash password before pushing into database
+    # Method to hash password before pushing into database
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
-    # Function to compare password from input password with hashed password from database
+    # Method to compare password from input password with hashed password from database
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
@@ -30,12 +32,20 @@ class Budget(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     categories = db.relationship('Category', backref='budget', lazy='dynamic', cascade='all, delete, delete-orphan')
 
+
+class AllowedUsers(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    budget_id = db.Column(db.Integer, db.ForeignKey('budget.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    editor = db.Column(db.Boolean)
+
+
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), index=True, unique=False)
     description = db.Column(db.String(128), index=False, unique=False)
     budget_id = db.Column(db.Integer, db.ForeignKey('budget.id'))
-    expenses = db.relationship('Expense', backref='category', lazy='dynamic', cascade='all, delete, delete-orphan')
+    #expenses = db.relationship('Expense', backref='category', lazy='dynamic', cascade='all, delete, delete-orphan')
     color = db.Column(db.String(8), index=False, unique=False)
 
 class Expense(db.Model):
@@ -47,8 +57,13 @@ class Expense(db.Model):
     date = db.Column(db.Date(), default=datetime.today(), index=True)
     amount = db.Column(db.String(12), index=True, unique=False)
     payer = db.Column(db.Integer, db.ForeignKey('user.id'))
-    used_by = db.relationship('User')
 
     def __repr__(self):
         #return f'<id: {self.id} name: {self.name}, category_id: {self.category_id}, amount: {self.amount}, date: {self.date}>'
         return f'<id: {self.id}, date: {self.date}>'
+
+
+class UsedBy(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    expense_id = db.Column(db.Integer, db.ForeignKey('expense.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

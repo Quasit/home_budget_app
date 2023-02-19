@@ -2,11 +2,28 @@ from logging.config import valid_ident
 from unicodedata import category, name
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, BooleanField, SelectField, DateField, DecimalField, SelectMultipleField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired
-from wtforms.widgets import ColorInput
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired, StopValidation
+from wtforms.widgets import ColorInput, TableWidget, CheckboxInput
 from datetime import date
 
-from models import User, Category
+from models import User, Category, AllowedUsers
+from functions import get_allowed_users
+
+
+class MultiCheckboxField(SelectMultipleField):
+    widget = TableWidget()
+    option_widget = CheckboxInput()
+
+
+class MultiCheckboxAtLeastOne():
+    def __init__(self, message=None):
+        if not message:
+            message = 'At least one option must be selected.'
+        self.message = message
+
+    def __call__(self, form, field):
+        if len(field.data) == 0:
+            raise StopValidation(self.message)
 
 
 class RegistrationForm(FlaskForm):
@@ -49,8 +66,8 @@ class ExpenseForm(FlaskForm):
     category = SelectField('Kategoria', choices=[])
     date = DateField('Data', format='%Y-%m-%d', validators=[DataRequired()])
     amount = DecimalField('Kwota', places=2, validators=[DataRequired()])
-    #payer = SelectField('Płaci', choices=[])
-    #used_by = SelectMultipleField('Używa', choices=[])
+    payer = SelectField('Płaci', choices=[])
+    used_by = MultiCheckboxField('Używa', choices=[], validators=[MultiCheckboxAtLeastOne()])
     submit = SubmitField('Wyślij')
 
     def validate_date(form, field):
@@ -61,3 +78,9 @@ class ExpenseForm(FlaskForm):
         categories = Category.query.filter_by(budget_id=budget_id).all()
         category_list = [cat.name for cat in categories]
         return category_list
+
+    def get_allowed_users_names(self, budget_id):
+        allowed_users = AllowedUsers.query.filter_by(budget_id=budget_id).all()
+        allowed_users_list = [User.query.get(user.user_id).username for user in allowed_users]
+        return allowed_users_list
+        

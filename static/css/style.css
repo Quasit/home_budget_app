@@ -822,6 +822,18 @@ input:-webkit-autofill:active {
     background-color: #F2B202;
 }
 
+.add_expense_form_table #used_by {
+    border: none;
+    background-color: #16302B;
+    font-size: 18px;
+    color: #FFFFFF;
+    padding: 0px 10px;
+    width: 400px;
+}
+
+.add_expense_form_table #used_by label {
+    font-weight: normal;
+}
 
 /* --------- BUDGET OVERVIEW STYLES --------- */
 
