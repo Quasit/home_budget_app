@@ -2,8 +2,8 @@ from datetime import datetime, timedelta, date
 from calendar import monthrange
 from random import randint
 
-from main import db
-from models import User, Budget, Category, Expense, AllowedUsers, UsedBy
+from script.main import db
+from script.models import User, Budget, Category, Expense, AllowedUsers, UsedBy
 
 
 def sort_func(e):

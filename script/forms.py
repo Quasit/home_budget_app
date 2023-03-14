@@ -6,8 +6,8 @@ from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, In
 from wtforms.widgets import ColorInput, TableWidget, CheckboxInput
 from datetime import date
 
-from models import User, Category, AllowedUsers
-from functions import get_allowed_users
+from script.models import User, Category, AllowedUsers
+from script.functions import get_allowed_users
 
 
 class MultiCheckboxField(SelectMultipleField):

@@ -5,10 +5,10 @@ from werkzeug.urls import url_parse
 from datetime import datetime, timedelta
 from calendar import monthrange
 
-from main import app, db, login_manager
-from models import User, Budget, Category, Expense, AllowedUsers, UsedBy
-from forms import RegistrationForm, LoginForm, BudgetForm, CategoryForm, ExpenseForm
-from functions import get_expenses, get_default_period_dates, get_expenses_from_period, get_expense_summary, random_color, get_allowed_users
+from script.main import app, db, login_manager
+from script.models import User, Budget, Category, Expense, AllowedUsers, UsedBy
+from script.forms import RegistrationForm, LoginForm, BudgetForm, CategoryForm, ExpenseForm
+from script.functions import get_expenses, get_default_period_dates, get_expenses_from_period, get_expense_summary, random_color, get_allowed_users
 
 
 @app.route('/')
