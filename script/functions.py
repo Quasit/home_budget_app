@@ -12,34 +12,49 @@ def sort_func(e):
 def random_color():
     r = lambda: randint(0,255)
     return '#%02X%02X%02X' % (r(),r(),r())
-    
 
-def get_expenses(budget_id):
+
+def get_usedby_list_by_expense_id(expense_id):
+    database_used_by_records = UsedBy.query.filter_by(expense_id=expense_id).all()
+    used_by_list = [User.query.filter_by(id=record.user_id).first().username for record in database_used_by_records]
+    return used_by_list
+
+
+def get_used_by_short(used_by_list):
+    usedby_short = ''
+    if len(used_by_list) == 1:
+        usedby_short = used_by_list[0]
+    elif len(used_by_list) >= 2 and len(used_by_list) < 5:
+        usedby_short = str(len(used_by_list)) + ' osoby'
+    elif len(used_by_list) >= 5:
+        usedby_short = str(len(used_by_list)) + ' osób'
+    return usedby_short
+
+
+def get_used_by_long(used_by_list):
+    used_by_long = ''
+    for name in used_by_list:
+        used_by_long+= name + ', '
+    used_by_long = used_by_long[:-2]
+    return used_by_long
+
+
+def get_categories_dict(budget_id):
     categories = Category.query.filter_by(budget_id=budget_id).all()
     category_dict = {}
     for category in categories:
         category_dict[category.id] = [category.name, category.description]
-    
-    AllowedUsers_count = len(AllowedUsers.query.filter_by(budget_id=budget_id).all())
 
+
+def get_expenses(budget_id):
+    category_dict = get_categories_dict(budget_id)
     expenses = Expense.query.filter_by(budget_id=budget_id).all()
     expenses_list = []
     for expense in expenses:
-        database_used_by_records = UsedBy.query.filter_by(expense_id=expense.id).all()
-        used_by_list = [User.query.filter_by(id=record.user_id).first().username for record in database_used_by_records]
-        used_by_list_len = len(used_by_list)
-        usedby_short = ''
-        if used_by_list_len == 1:
-            usedby_short = used_by_list[0]
-        elif used_by_list_len >= 2 and used_by_list_len < 5:
-            usedby_short = str(used_by_list_len) + ' osoby'
-        elif used_by_list_len >= 5:
-            usedby_short = str(used_by_list_len) + ' osób'
-        
-        used_by_full_description = ''
-        for name in used_by_list:
-            used_by_full_description+= name + ', '
-        used_by_full_description = used_by_full_description[:-2]
+        used_by_list = get_usedby_list_by_expense_id(expense.id)
+        usedby_short = get_used_by_short(used_by_list)
+        used_by_full_description = get_used_by_long(used_by_list)
+
         expense_dict = {
             "id": expense.id,
             "name": expense.name,
