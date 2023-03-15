@@ -53,6 +53,7 @@ def get_categories_dict(budget_id):
     category_dict = {}
     for category in categories:
         category_dict[category.id] = [category.name, category.description]
+    return category_dict
 
 
 def get_expenses(budget_id):
