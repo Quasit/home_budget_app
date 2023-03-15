@@ -7,31 +7,38 @@ from script.models import User, Budget, Category, Expense, AllowedUsers, UsedBy
 
 
 def sort_func(e):
+  """ Function to sort data by date """
   return e['date']
 
 def random_color():
+    """ Function which returns random Hex color code """
     r = lambda: randint(0,255)
     return '#%02X%02X%02X' % (r(),r(),r())
 
 
-def get_usedby_list_by_expense_id(expense_id):
+def get_used_by_list_by_expense_id(expense_id):
+    """ Function takes expense_id and returns list with usernames from UsedBy table which is related to expense_id """
     database_used_by_records = UsedBy.query.filter_by(expense_id=expense_id).all()
     used_by_list = [User.query.filter_by(id=record.user_id).first().username for record in database_used_by_records]
     return used_by_list
 
 
 def get_used_by_short(used_by_list):
-    usedby_short = ''
+    """ Function takes list of usernames and if it's just 1 user return string with it's username,
+        or if there is more users it return string with quantity.
+        It needs some conditions for polish plural form of 'person' """
+    used_by_short = ''
     if len(used_by_list) == 1:
-        usedby_short = used_by_list[0]
+        used_by_short = used_by_list[0]
     elif len(used_by_list) >= 2 and len(used_by_list) < 5:
-        usedby_short = str(len(used_by_list)) + ' osoby'
+        used_by_short = str(len(used_by_list)) + ' osoby'
     elif len(used_by_list) >= 5:
-        usedby_short = str(len(used_by_list)) + ' osób'
-    return usedby_short
+        used_by_short = str(len(used_by_list)) + ' osób'
+    return used_by_short
 
 
 def get_used_by_long(used_by_list):
+    """ Function takes list of usernames and returns string of those usernames separated with comma """
     used_by_long = ''
     for name in used_by_list:
         used_by_long+= name + ', '
@@ -40,6 +47,8 @@ def get_used_by_long(used_by_list):
 
 
 def get_categories_dict(budget_id):
+    """ Function takes budget_id and returns dictionary of categories with it's name and description in schema:
+        category_dict[category.id] = [category.name, category.description] """
     categories = Category.query.filter_by(budget_id=budget_id).all()
     category_dict = {}
     for category in categories:
@@ -47,12 +56,27 @@ def get_categories_dict(budget_id):
 
 
 def get_expenses(budget_id):
+    """ Function takes budget_id and returns list of expenses(dictionaries).\n
+        Each expense in list is dictionary with such keys
+            "id": expense.id,
+            "name": expense.name,
+            "description": expense.description,
+            "date": expense.date,
+            "category_id": expense.category_id (Category table id),
+            "category_name": category.name,
+            "category_description": category.description,
+            "amount": expense.amount (float number),
+            "payer_id": expense.payer (User table id),
+            "payer_name": user.username,
+            "used_by": string with number of users (or if 1 user -> it's User.username),
+            "used_by_full_description": string with all User.username separated by comma """
+    
     category_dict = get_categories_dict(budget_id)
     expenses = Expense.query.filter_by(budget_id=budget_id).all()
     expenses_list = []
     for expense in expenses:
-        used_by_list = get_usedby_list_by_expense_id(expense.id)
-        usedby_short = get_used_by_short(used_by_list)
+        used_by_list = get_used_by_list_by_expense_id(expense.id)
+        used_by_short = get_used_by_short(used_by_list)
         used_by_full_description = get_used_by_long(used_by_list)
 
         expense_dict = {
@@ -66,7 +90,7 @@ def get_expenses(budget_id):
             "amount": float(expense.amount),
             "payer_id": expense.payer,
             "payer_name": User.query.get(expense.payer).username,
-            "used_by": usedby_short,
+            "used_by": used_by_short,
             "used_by_full_description": used_by_full_description
         }
         expenses_list.append(expense_dict)
@@ -121,6 +145,10 @@ def get_expense_summary(expense_list):
     categories_dataset = []
     categories_summary = {}
 
+    # This loop puts category names into categories_labels list,
+    # color codes of those categories into categories_colors list,
+    # and sums expenses by categories and puts sum data into dictionary
+    # with pair: category name as key - and sum amount as value
     for expense, category in expense_list:
         if category.name not in categories_labels:
             categories_labels.append(category.name)
@@ -130,9 +158,11 @@ def get_expense_summary(expense_list):
         except:
             categories_summary[category.name] = float(expense.amount)
 
+    # This loop preparing list of only category sum values (pure numbers) used later to generate chart
     for cat in categories_labels:
         categories_dataset.append(categories_summary[cat])
 
+    # This loop set values in categories_summary dictionary to be 2 digits after . sign
     for cat, amount in categories_summary.items():
         categories_summary[cat] = '%.2f' % amount
 
@@ -146,6 +176,7 @@ def get_expense_summary(expense_list):
 
 
 def get_allowed_users(budget_id):
+    """ Function takes budget_id and returns list of User.id's from AllowedUsers table"""
     allowed_users = AllowedUsers.query.filter_by(budget_id=budget_id).all()
     allowed_users_list = [user.id for user in allowed_users]
     return allowed_users_list
