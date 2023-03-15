@@ -11,7 +11,7 @@
 
 <hr>
 <ul>
-{% for budget in budgets %}
+{% for budget in g.allowed_budgets %}
     <li>
         <h3><a href="{{ url_for('budget', budget_id=budget.id) }}">{{ budget.name }}</a> - {{ budget.description }}</h3>
     </li>

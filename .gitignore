@@ -6,3 +6,4 @@ script/color_testing.py
 templates/testing.html
 budget_database.db
 temp.txt
+quick_test.py

@@ -4,7 +4,6 @@ from flask_login import LoginManager
 from pathlib import Path
 
 ROOT_DIR = str(Path(__file__).parent.parent)
-print(ROOT_DIR)
 
 app = Flask(__name__, template_folder='../templates/', static_folder='../static/')
 

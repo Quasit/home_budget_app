@@ -8,14 +8,14 @@
             <h1>{{ budget.name }}</h1>
         </div>
         <div class="budget-menu">
-            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('budget_settings', budget_id=budget_id, budget=budget ) }}">&#128736 Ustawienia</button></form>
-            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('expenses', budget_id=budget_id, budget=budget ) }}">&#128197 Wydatki</button></form>
-            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('budget', budget_id=budget_id, budget=budget ) }}">&#128202 Podsumowanie</button></form>
+            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('budget_settings', budget_id=budget.id, budget=budget ) }}">&#128736 Ustawienia</button></form>
+            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('expenses', budget_id=budget.id, budget=budget ) }}">&#128197 Wydatki</button></form>
+            <form class="budget-menu-form"><button class="budget-menu-btn" type="submit" formaction="{{ url_for('budget', budget_id=budget.id, budget=budget ) }}">&#128202 Podsumowanie</button></form>
         </div>
     </div>
     <hr/>
     <div class="add_expense">
-        <form class="add_expense_form"><button class="add_expense_btn" type="submit" formaction="{{ url_for('add_expense', budget_id=budget_id, budget=budget ) }}">Dodaj wpis</button></form>
+        <form class="add_expense_form"><button class="add_expense_btn" type="submit" formaction="{{ url_for('add_expense', budget_id=budget.id, budget=budget ) }}">Dodaj wpis</button></form>
     </div>
     <hr style="margin-bottom: 0;" />
     <div class="budget-expenses-table-wrapper" id="budget-expenses-table-wrapper">

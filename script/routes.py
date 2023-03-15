@@ -1,5 +1,5 @@
 from unicodedata import decimal
-from flask import render_template, url_for, redirect, flash, request
+from flask import render_template, url_for, redirect, flash, request, g
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from datetime import datetime, timedelta
@@ -8,14 +8,14 @@ from calendar import monthrange
 from script.main import app, db, login_manager
 from script.models import User, Budget, Category, Expense, AllowedUsers, UsedBy
 from script.forms import RegistrationForm, LoginForm, BudgetForm, CategoryForm, ExpenseForm
-from script.functions import get_expenses, get_default_period_dates, get_expenses_from_period, get_expense_summary, random_color, get_allowed_users
+from script.functions import (get_expenses, get_default_period_dates, get_expenses_from_period,
+    get_expense_summary, random_color
+)
 
 
 @app.route('/')
 def index():
-    if current_user.is_authenticated:
-        budgets = Budget.query.filter_by(owner_id=current_user.id).all()
-    return render_template('main_page.html', budgets=budgets)
+    return render_template('main_page.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -66,14 +66,12 @@ def logout():
 @app.route('/my_budgets')
 @login_required
 def my_budgets():
-    budgets = Budget.query.filter_by(owner_id=current_user.id).all()
-    return render_template('my_budgets.html', budgets=budgets)
+    return render_template('my_budgets.html')
 
 
 @app.route('/budget/add_budget', methods=['GET', 'POST'])
 @login_required
 def add_budget():
-    budgets = Budget.query.filter_by(owner_id=current_user.id).all()
     form = BudgetForm()
     if form.validate_on_submit():
         user = User.query.filter_by(id=current_user.id).first()
@@ -84,14 +82,12 @@ def add_budget():
         db.session.add(allowedUser)
         db.session.commit()
         return redirect(url_for('my_budgets'))
-    return render_template('add_budget.html', form=form, budgets=budgets)
+    return render_template('add_budget.html', form=form)
 
 
 @app.route('/budget/<int:budget_id>')
 @login_required
 def budget(budget_id: int):
-    budgets = Budget.query.filter_by(owner_id=current_user.id).all()
-
     budget = Budget.query.filter_by(id=budget_id).first()
 
     this_month_begin, this_month_end = get_default_period_dates('this_month')
@@ -114,22 +110,20 @@ def budget(budget_id: int):
     all_one_year_period = get_expenses_from_period(budget_id, one_yar_period_begin, one_yar_period_end)
     expenses_summary["one_year_period"] = get_expense_summary(all_one_year_period)
 
-    return render_template('budget_summary.html', budgets=budgets, budget_id=budget.id, budget=budget, expenses_summary=expenses_summary)
+    return render_template('budget_summary.html', budget_id=budget.id, budget=budget, expenses_summary=expenses_summary)
 
 
 @app.route('/budget/<int:budget_id>/expenses')
 @login_required
 def expenses(budget_id: int):
-    budgets = Budget.query.filter_by(owner_id=current_user.id).all()
     budget = Budget.query.filter_by(id=budget_id).first()
     expenses = get_expenses(budget_id)
-    return render_template('budget_expenses.html', budgets=budgets, budget_id=budget.id, budget=budget, expenses=expenses, counter=0)
+    return render_template('budget_expenses.html', budget_id=budget.id, budget=budget, expenses=expenses, counter=0)
 
 
 @app.route('/budget/<int:budget_id>/add_expense', methods=['GET', 'POST'])
 @login_required
 def add_expense(budget_id: int):
-    budgets = Budget.query.filter_by(owner_id=current_user.id).all()
     budget = Budget.query.filter_by(id=budget_id).first()
     form = ExpenseForm()
     form.category.choices = form.get_categories(budget_id)
@@ -149,13 +143,12 @@ def add_expense(budget_id: int):
             db.session.add(used_by_record)
         db.session.commit()
         return redirect(url_for('expenses', budget_id=budget_id))
-    return render_template('add_expense.html', budgets=budgets, budget_id=budget_id, form=form)
+    return render_template('add_expense.html', budget_id=budget_id, form=form)
 
 
 @app.route('/budget/<int:budget_id>/edit_expense/<int:expense_id>', methods=['GET', 'POST'])
 @login_required
 def edit_expense(budget_id: int, expense_id: int):
-    budgets = Budget.query.filter_by(owner_id=current_user.id).all()
     expense = Expense.query.filter_by(id=expense_id).first()
     database_used_by_records = UsedBy.query.filter_by(expense_id=expense_id).all()
     database_used_by_user_id = [record.user_id for record in database_used_by_records]
@@ -200,40 +193,37 @@ def edit_expense(budget_id: int, expense_id: int):
     form.payer.data = User.query.get(expense.payer).username
     used_by_list = [User.query.filter_by(id=record.user_id).first().username for record in database_used_by_records]
     form.used_by.data = used_by_list
-    return render_template('edit_expense.html', budgets=budgets, budget_id=budget_id, form=form, expense_id=expense_id, expense=expense)
+    return render_template('edit_expense.html', budget_id=budget_id, form=form, expense_id=expense_id, expense=expense)
 
 
 @app.route('/budget/<int:budget_id>/remove_expense/<int:expense_id>')
 def remove_expense(budget_id: int, expense_id: int):
-    budgets = Budget.query.filter_by(owner_id=current_user.id).all()
     expense_to_remove = Expense.query.filter_by(id=expense_id).first()
     used_by_records = UsedBy.query.filter_by(expense_id=expense_to_remove.id).all()
     db.session.delete(expense_to_remove)
     for record in used_by_records:
         db.session.delete(record)
     db.session.commit()
-    return redirect(url_for('expenses', budgets=budgets, budget_id=budget_id))
+    return redirect(url_for('expenses', budget_id=budget_id))
 
 
 @app.route('/budget/<int:budget_id>/add_category', methods=['GET', 'POST'])
 @login_required
 def add_category(budget_id: int):
-    budgets = Budget.query.filter_by(owner_id=current_user.id).all()
     budget = Budget.query.filter_by(id=budget_id).first()
     form = CategoryForm()
     if form.validate_on_submit():
         category = Category(name=form.name.data, description=form.description.data, budget_id=budget_id, color=form.category_color.data)
         db.session.add(category)
         db.session.commit()
-        return redirect(url_for('budget_settings', budgets=budgets, budget_id=budget_id))
+        return redirect(url_for('budget_settings', budget_id=budget_id))
     form.category_color.data = random_color()
-    return render_template('add_category.html', budgets=budgets, budget_id=budget_id, form=form)
+    return render_template('add_category.html', budget_id=budget_id, form=form)
 
 
 @app.route('/budget/<int:budget_id>/edit_category/<int:category_id>', methods=['GET', 'POST'])
 @login_required
 def edit_category(budget_id: int, category_id: int):
-    budgets = Budget.query.filter_by(owner_id=current_user.id).all()
     budget = Budget.query.filter_by(id=budget_id).first()
     category = Category.query.filter_by(id=category_id).first()
     form = CategoryForm()
@@ -248,24 +238,22 @@ def edit_category(budget_id: int, category_id: int):
     form.name.data = category.name
     form.description.data = category.description
     form.category_color.data = category.color
-    return render_template('edit_category.html', budgets=budgets, budget_id=budget_id, form=form)
+    return render_template('edit_category.html', budget_id=budget_id, form=form)
 
 
 @app.route('/budget/<int:budget_id>/remove_category/<int:category_id>')
 def remove_category(budget_id: int, category_id: int):
-    budgets = Budget.query.filter_by(owner_id=current_user.id).all()
     category_to_remove = Category.query.filter_by(id=category_id).first()
     db.session.delete(category_to_remove)
     db.session.commit()
-    return redirect(url_for('budget_settings', budgets=budgets, budget_id=budget_id))
+    return redirect(url_for('budget_settings', budget_id=budget_id))
 
 
 @app.route('/budget/<int:budget_id>/settings')
 def budget_settings(budget_id: int):
-    budgets = Budget.query.filter_by(owner_id=current_user.id).all()
     budget = Budget.query.filter_by(id=budget_id).first()
     categories = Category.query.filter_by(budget_id=budget_id).all()
-    return render_template('budget_settings.html', budgets=budgets, budget=budget, budget_id=budget_id, categories=categories)
+    return render_template('budget_settings.html', budget=budget, budget_id=budget_id, categories=categories)
 
 
 @app.route('/testing')

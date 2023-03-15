@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta, date
 from calendar import monthrange
 from random import randint
+from flask import g
+from flask_login import current_user
 
-from script.main import db
+from script.main import db, app
 from script.models import User, Budget, Category, Expense, AllowedUsers, UsedBy
 
 
@@ -14,6 +16,26 @@ def random_color():
     """ Function which returns random Hex color code """
     r = lambda: randint(0,255)
     return '#%02X%02X%02X' % (r(),r(),r())
+
+
+def get_allowed_budgets_list(user_id):
+    budgets = []
+    allowed_budgets = AllowedUsers.query.filter_by(user_id=user_id).all()
+    for budget in allowed_budgets:
+        budgets.append(Budget.query.filter_by(id=budget.budget_id).first())
+    return budgets
+
+
+@app.before_request
+def get_allowed_budgets():
+    if 'allowed_budgets' not in g and current_user.is_authenticated:
+        g.allowed_budgets = get_allowed_budgets_list(current_user.id)
+
+    
+@app.teardown_appcontext
+def teardown_allowed_budgets(exception):
+    g.pop('allowed_budgets', None)
+
 
 
 def get_used_by_list_by_expense_id(expense_id):

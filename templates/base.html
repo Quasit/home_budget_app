@@ -31,7 +31,7 @@
                         <div class="navbar-dropdown">
                             <form class="navbar-dropbtn" style="padding: 0;"><button class="navbar-dropbtn" type="submit" formaction="{{ url_for('my_budgets') }}">Moje budżety</button></form>
                             <div class="navbar-dropdown-content">
-                                {% for budget in budgets %}
+                                {% for budget in g.allowed_budgets %}
                                 <a href="{{ url_for('budget', budget_id=budget.id) }}">{{ budget.name }}</a>
                                 {% endfor %}
                             </div>
