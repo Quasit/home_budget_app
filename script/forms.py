@@ -1,13 +1,10 @@
-from logging.config import valid_ident
-from unicodedata import category, name
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, BooleanField, SelectField, DateField, DecimalField, SelectMultipleField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired, StopValidation
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, StopValidation
 from wtforms.widgets import ColorInput, TableWidget, CheckboxInput
 from datetime import date
 
 from script.models import User, Category, AllowedUsers
-from script.functions import get_allowed_users
 
 
 class MultiCheckboxField(SelectMultipleField):

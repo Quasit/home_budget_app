@@ -1,16 +1,17 @@
-from unicodedata import decimal
-from flask import render_template, url_for, redirect, flash, request, g
+from flask import render_template, url_for, redirect, flash, request, current_app
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
-from datetime import datetime, timedelta
-from calendar import monthrange
+from script.main import app
+from script.main import login_manager
+from script.models import db
 
-from script.main import app, db, login_manager
+
 from script.models import User, Budget, Category, Expense, AllowedUsers, UsedBy
 from script.forms import RegistrationForm, LoginForm, BudgetForm, CategoryForm, ExpenseForm
 from script.functions import (get_expenses, get_default_period_dates, get_expenses_from_period,
     get_expense_summary, random_color
 )
+
 
 
 @app.route('/')

@@ -1,9 +1,11 @@
 .venv
 .vscode
-script/__pycache__
 add_db_data.py
 script/color_testing.py
 templates/testing.html
 budget_database.db
 temp.txt
-quick_test.py
+*__pycache__
+script/config.py
+.pytest_cache
+/instance

@@ -1,11 +1,10 @@
 from datetime import datetime
-from enum import unique
-from unicodedata import category
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from flask import request
+from flask_sqlalchemy import SQLAlchemy
 
-from script.main import db
+
+db = SQLAlchemy()
 
 
 class User(db.Model, UserMixin):

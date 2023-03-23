@@ -4,7 +4,8 @@ from random import randint
 from flask import g
 from flask_login import current_user
 
-from script.main import db, app
+from script.main import app
+from script.models import db
 from script.models import User, Budget, Category, Expense, AllowedUsers, UsedBy
 
 
@@ -198,7 +199,7 @@ def get_expense_summary(expense_list):
     }
 
 
-def get_allowed_users(budget_id):
+def get_allowed_users_ids(budget_id):
     """ Function takes budget_id and returns list of User.id's from AllowedUsers table"""
     allowed_users = AllowedUsers.query.filter_by(budget_id=budget_id).all()
     allowed_users_list = [user.id for user in allowed_users]
