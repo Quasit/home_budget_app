@@ -1,6 +1,7 @@
 from flask import Flask
 import os
-from script.config import DevelopmentConfig, TestingConfig
+
+    
 
 def create_app(test_config=None):
     app = Flask(__name__, template_folder='../templates/', static_folder='../static/', instance_relative_config=True)
@@ -10,12 +11,21 @@ def create_app(test_config=None):
         'SECRET_KEY' : 'dev',
     })
 
+    
     if test_config is None:
         # load the instance of development config, when not testing
-        app.config.from_object(DevelopmentConfig())
+        try:
+            from script.config import DevelopmentConfig
+            app.config.from_object(DevelopmentConfig())
+        except ModuleNotFoundError:
+          pass
     else:
         # load the default test config and then load passed in test config
-        app.config.from_object(TestingConfig())
+        try:
+            from script.config import TestingConfig
+            app.config.from_object(TestingConfig())
+        except ModuleNotFoundError:
+          pass
         app.config.from_mapping(test_config)
     
     from script.models import db
