@@ -4,12 +4,12 @@ from script.create_tables import create_tables
 from tests.add_test_data import add_test_data
 
 
+
 @pytest.fixture
 def app():
     
     app = create_app({
         'TESTING': True,
-        'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:'
     })
 
     with app.app_context():

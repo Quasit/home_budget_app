@@ -7,6 +7,7 @@ def create_app(test_config=None):
     app = Flask(__name__, template_folder='../templates/', static_folder='../static/', instance_relative_config=True)
     app.config.from_mapping({
         'TESTING' : False,
+        'SQLALCHEMY_DATABASE_URI' : 'sqlite:///:memory:',
         'SQLALCHEMY_TRACK_MODIFICATIONS' : False,
         'SECRET_KEY' : 'dev',
     })
@@ -18,14 +19,9 @@ def create_app(test_config=None):
             from script.config import DevelopmentConfig
             app.config.from_object(DevelopmentConfig())
         except ModuleNotFoundError:
-          pass
+            pass
     else:
         # load the default test config and then load passed in test config
-        try:
-            from script.config import TestingConfig
-            app.config.from_object(TestingConfig())
-        except ModuleNotFoundError:
-          pass
         app.config.from_mapping(test_config)
     
     from script.models import db
