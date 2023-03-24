@@ -9,3 +9,4 @@ temp.txt
 script/config.py
 .pytest_cache
 /instance
+*.egg-info/

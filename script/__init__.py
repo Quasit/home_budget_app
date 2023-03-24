@@ -4,6 +4,11 @@ from script.config import DevelopmentConfig, TestingConfig
 
 def create_app(test_config=None):
     app = Flask(__name__, template_folder='../templates/', static_folder='../static/', instance_relative_config=True)
+    app.config.from_mapping({
+        'TESTING' : False,
+        'SQLALCHEMY_TRACK_MODIFICATIONS' : False,
+        'SECRET_KEY' : 'dev',
+    })
 
     if test_config is None:
         # load the instance of development config, when not testing
