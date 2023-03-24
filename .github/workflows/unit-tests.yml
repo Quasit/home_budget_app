@@ -1,0 +1,45 @@
+---
+name: Python unit tests
+
+on:
+  push:
+    branches:
+    - main
+    - tests
+  pull_request:
+    branches:
+    - main
+
+permissions:
+  contents: read
+  issues: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt   
+    - name: Run pytest
+      run: | 
+        pip install pytest-cov
+        pytest --junitxml=junit.xml --cov=com --cov-report=xml --cov-report=html
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2.4.2
+      if: always()
+      with:
+        github_token: "${{ secrets.GITHUB_TOKEN }}"
+        files: junit.xml
+        check_name: unit test report
+        report_individual_runs: true
