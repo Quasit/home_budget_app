@@ -198,6 +198,7 @@ def edit_expense(budget_id: int, expense_id: int):
 
 
 @app.route('/budget/<int:budget_id>/remove_expense/<int:expense_id>')
+@login_required
 def remove_expense(budget_id: int, expense_id: int):
     expense_to_remove = Expense.query.filter_by(id=expense_id).first()
     used_by_records = UsedBy.query.filter_by(expense_id=expense_to_remove.id).all()
@@ -243,6 +244,7 @@ def edit_category(budget_id: int, category_id: int):
 
 
 @app.route('/budget/<int:budget_id>/remove_category/<int:category_id>')
+@login_required
 def remove_category(budget_id: int, category_id: int):
     category_to_remove = Category.query.filter_by(id=category_id).first()
     db.session.delete(category_to_remove)
@@ -251,17 +253,8 @@ def remove_category(budget_id: int, category_id: int):
 
 
 @app.route('/budget/<int:budget_id>/settings')
+@login_required
 def budget_settings(budget_id: int):
     budget = Budget.query.filter_by(id=budget_id).first()
     categories = Category.query.filter_by(budget_id=budget_id).all()
     return render_template('budget_settings.html', budget=budget, budget_id=budget_id, categories=categories)
-
-
-@app.route('/testing')
-def testing():
-    return render_template('testing.html')
-
-
-@app.route('/test')
-def test():
-    return render_template('test.html')

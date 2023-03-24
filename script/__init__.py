@@ -15,7 +15,6 @@ def create_app(test_config=None):
     
     from script.models import db
     db.init_app(app)
-
     try:
         os.makedirs(app.instance_path)
     except OSError:

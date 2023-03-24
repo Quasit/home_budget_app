@@ -37,7 +37,6 @@
                             </div>
                         </div>
                         {% endif %}
-                        <form class="navbar-btn-form"><button class="navbar-btn" type="submit" formaction="{{ url_for('testing') }}">TEST</button></form>
                         {% if current_user.is_anonymous %}
                         <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="{{ url_for('register') }}">Zarejestruj</button></form>
                         <form class="navbar-btn-form-login"><button class="navbar-btn-login" type="submit" formaction="{{ url_for('login') }}">Zaloguj</button></form>
