@@ -1,25 +1,39 @@
-from flask import render_template, url_for, redirect, flash, request, current_app
-from flask_login import current_user, login_user, logout_user, login_required
+from flask import Blueprint, render_template, url_for, redirect, flash, request, g, current_app
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
-from script.main import app
-from script.main import login_manager
 from script.models import db
 
 
 from script.models import User, Budget, Category, Expense, AllowedUsers, UsedBy
 from script.forms import RegistrationForm, LoginForm, BudgetForm, CategoryForm, ExpenseForm
 from script.functions import (get_expenses, get_default_period_dates, get_expenses_from_period,
-    get_expense_summary, random_color
+    get_expense_summary, random_color, get_allowed_budgets_list
 )
 
+login_manager = LoginManager()
+login_manager.login_view = 'login'
+
+general = Blueprint('', __name__)
 
 
-@app.route('/')
+def get_allowed_budgets():
+    if current_user.is_authenticated:
+        if 'allowed_budgets' not in g:
+            g.allowed_budgets = get_allowed_budgets_list(current_user.id)
+    else:
+        if 'allowed_budgets' in g:
+            g.pop('allowed_budgets', None)
+
+general.before_app_request(get_allowed_budgets)
+
+
+
+@general.route('/')
 def index():
     return render_template('main_page.html')
 
 
-@app.route('/register', methods=['GET', 'POST'])
+@general.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -34,7 +48,7 @@ def register():
     return render_template('register.html', form=form)
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@general.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -57,20 +71,20 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-@app.route('/logout')
+@general.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
 
 
-@app.route('/my_budgets')
+@general.route('/my_budgets')
 @login_required
 def my_budgets():
     return render_template('my_budgets.html')
 
 
-@app.route('/budget/add_budget', methods=['GET', 'POST'])
+@general.route('/budget/add_budget', methods=['GET', 'POST'])
 @login_required
 def add_budget():
     form = BudgetForm()
@@ -86,7 +100,7 @@ def add_budget():
     return render_template('add_budget.html', form=form)
 
 
-@app.route('/budget/<int:budget_id>')
+@general.route('/budget/<int:budget_id>')
 @login_required
 def budget(budget_id: int):
     budget = Budget.query.filter_by(id=budget_id).first()
@@ -114,7 +128,7 @@ def budget(budget_id: int):
     return render_template('budget_summary.html', budget_id=budget.id, budget=budget, expenses_summary=expenses_summary)
 
 
-@app.route('/budget/<int:budget_id>/expenses')
+@general.route('/budget/<int:budget_id>/expenses')
 @login_required
 def expenses(budget_id: int):
     budget = Budget.query.filter_by(id=budget_id).first()
@@ -122,7 +136,7 @@ def expenses(budget_id: int):
     return render_template('budget_expenses.html', budget_id=budget.id, budget=budget, expenses=expenses, counter=0)
 
 
-@app.route('/budget/<int:budget_id>/add_expense', methods=['GET', 'POST'])
+@general.route('/budget/<int:budget_id>/add_expense', methods=['GET', 'POST'])
 @login_required
 def add_expense(budget_id: int):
     budget = Budget.query.filter_by(id=budget_id).first()
@@ -147,7 +161,7 @@ def add_expense(budget_id: int):
     return render_template('add_expense.html', budget_id=budget_id, form=form)
 
 
-@app.route('/budget/<int:budget_id>/edit_expense/<int:expense_id>', methods=['GET', 'POST'])
+@general.route('/budget/<int:budget_id>/edit_expense/<int:expense_id>', methods=['GET', 'POST'])
 @login_required
 def edit_expense(budget_id: int, expense_id: int):
     expense = Expense.query.filter_by(id=expense_id).first()
@@ -197,7 +211,7 @@ def edit_expense(budget_id: int, expense_id: int):
     return render_template('edit_expense.html', budget_id=budget_id, form=form, expense_id=expense_id, expense=expense)
 
 
-@app.route('/budget/<int:budget_id>/remove_expense/<int:expense_id>')
+@general.route('/budget/<int:budget_id>/remove_expense/<int:expense_id>')
 @login_required
 def remove_expense(budget_id: int, expense_id: int):
     expense_to_remove = Expense.query.filter_by(id=expense_id).first()
@@ -209,7 +223,7 @@ def remove_expense(budget_id: int, expense_id: int):
     return redirect(url_for('expenses', budget_id=budget_id))
 
 
-@app.route('/budget/<int:budget_id>/add_category', methods=['GET', 'POST'])
+@general.route('/budget/<int:budget_id>/add_category', methods=['GET', 'POST'])
 @login_required
 def add_category(budget_id: int):
     budget = Budget.query.filter_by(id=budget_id).first()
@@ -223,7 +237,7 @@ def add_category(budget_id: int):
     return render_template('add_category.html', budget_id=budget_id, form=form)
 
 
-@app.route('/budget/<int:budget_id>/edit_category/<int:category_id>', methods=['GET', 'POST'])
+@general.route('/budget/<int:budget_id>/edit_category/<int:category_id>', methods=['GET', 'POST'])
 @login_required
 def edit_category(budget_id: int, category_id: int):
     budget = Budget.query.filter_by(id=budget_id).first()
@@ -243,7 +257,7 @@ def edit_category(budget_id: int, category_id: int):
     return render_template('edit_category.html', budget_id=budget_id, form=form)
 
 
-@app.route('/budget/<int:budget_id>/remove_category/<int:category_id>')
+@general.route('/budget/<int:budget_id>/remove_category/<int:category_id>')
 @login_required
 def remove_category(budget_id: int, category_id: int):
     category_to_remove = Category.query.filter_by(id=category_id).first()
@@ -252,9 +266,10 @@ def remove_category(budget_id: int, category_id: int):
     return redirect(url_for('budget_settings', budget_id=budget_id))
 
 
-@app.route('/budget/<int:budget_id>/settings')
+@general.route('/budget/<int:budget_id>/settings')
 @login_required
 def budget_settings(budget_id: int):
     budget = Budget.query.filter_by(id=budget_id).first()
     categories = Category.query.filter_by(budget_id=budget_id).all()
     return render_template('budget_settings.html', budget=budget, budget_id=budget_id, categories=categories)
+

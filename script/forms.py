@@ -1,7 +1,13 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, BooleanField, SelectField, DateField, DecimalField, SelectMultipleField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, StopValidation
-from wtforms.widgets import ColorInput, TableWidget, CheckboxInput
+from wtforms.widgets import TableWidget, CheckboxInput
+try:
+    from wtforms.widgets import ColorInput
+except ImportError:
+    # The first method didn't work for pytest so here is workaround
+    from wtforms.widgets import html5
+    ColorInput = html5.ColorInput
 from datetime import date
 
 from script.models import User, Category, AllowedUsers

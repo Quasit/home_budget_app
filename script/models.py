@@ -2,10 +2,29 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import inspect
 
 
 db = SQLAlchemy()
 
+
+def create_tables_if_not_exist(app):
+    from script.models import db
+    with app.app_context():
+        inspector = inspect(db.engine)
+        if not inspector.has_table("user"):
+            from script.models import User
+        if not inspector.has_table("budget"):
+            from script.models import Budget
+        if not inspector.has_table("allowed_users"):
+            from script.models import AllowedUsers
+        if not inspector.has_table("category"):
+            from script.models import Category
+        if not inspector.has_table("expense"):
+            from script.models import Expense
+        if not inspector.has_table("used_by"):
+            from script.models import UsedBy
+        db.create_all()
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)

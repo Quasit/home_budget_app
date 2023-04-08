@@ -24,12 +24,15 @@ def create_app(test_config=None):
         # load the default test config and then load passed in test config
         app.config.from_mapping(test_config)
     
-    from script.models import db
+    from script.models import db, create_tables_if_not_exist
     db.init_app(app)
+    create_tables_if_not_exist(app)
+
+    from script.routes import login_manager
+    login_manager.init_app(app)
     try:
         os.makedirs(app.instance_path)
     except OSError:
         pass
-    
 
     return app

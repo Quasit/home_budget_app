@@ -1,10 +1,7 @@
 from datetime import datetime, timedelta, date
 from calendar import monthrange
 from random import randint
-from flask import g
-from flask_login import current_user
 
-from script.main import app
 from script.models import db
 from script.models import User, Budget, Category, Expense, AllowedUsers, UsedBy
 
@@ -25,17 +22,6 @@ def get_allowed_budgets_list(user_id):
     for budget in allowed_budgets:
         budgets.append(Budget.query.filter_by(id=budget.budget_id).first())
     return budgets
-
-
-@app.before_request
-def get_allowed_budgets():
-    if 'allowed_budgets' not in g and current_user.is_authenticated:
-        g.allowed_budgets = get_allowed_budgets_list(current_user.id)
-
-    
-@app.teardown_appcontext
-def teardown_allowed_budgets(exception):
-    g.pop('allowed_budgets', None)
 
 
 
