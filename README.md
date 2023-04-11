@@ -47,7 +47,7 @@ The main idea was to build web app for management home budget with more than 1 p
 The app's main use is to add all expenses and incomes made by all persons included in budget, but also check which person is using those expenses.
 For example when there is 2 people in house and one buys dinner, but both of them are using it. But the other time one of those persons buys ice cream and eats it alone.
 And this app is meant to allow to check who is using how much from money spent and how much money is spent compared to income.
-
+Those are just few basic examples of what that app would be used for.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -99,7 +99,7 @@ To run application locally follow below steps
    ```sh
    $env:FLASK_ENV="development"; python3 app_run.py
    ```
-6. App is available in your browser at 127.0.0.1:5000/
+6. App is available in your browser at <a href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a>
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
