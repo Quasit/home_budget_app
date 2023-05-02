@@ -145,6 +145,13 @@ hr {
     padding: 0px 20px;
 }
 
+.navbar-btn-form a, .navbar-btn-login a {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
 .navbar-btn:hover {
     background-color: #F2B202;
     color:#16302B;
@@ -174,8 +181,14 @@ hr {
     font-weight: bold;
     border: none;
     height: 100%;
-    padding: 0px 20px;
     cursor: pointer;
+}
+
+.navbar-dropbtn a {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .navbar-dropdown-content {
@@ -220,7 +233,14 @@ hr {
     font-weight: bold;
     border: none;
     height: 100%;
-    padding: 0px 20px;
+    padding: 0px;
+}
+
+.navbar-dropbtn-login a {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .navbar-dropdown-content-login {
@@ -274,6 +294,26 @@ hr {
 .go_back_form {
     height: 20px;
     color: #16302B;
+}
+
+.go_back_a {
+    background-color: #F2B202;
+    height: 100%;
+    width: 55px;
+    font-size: 13px;
+    color: #16302B;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0 4px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+
+}
+
+.go_back_a:hover {
+    background-color: #F53D00;
 }
 
 .go_back_btn {
@@ -874,16 +914,20 @@ input:-webkit-autofill:active {
     float: right;
 }
 
-.budget-menu-btn {
+.budget-menu-a {
     background-color: #F2B202;
+    color: black;
+    font-size: 12px;
     border: none;
-    height: 100%;
     outline: none;
     cursor: pointer;
-    padding: 10px;
+    padding: 10px; 
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
 
-.budget-menu-btn:hover {
+.budget-menu-a:hover {
     background-color: #F53D00;
 }
 
@@ -1002,16 +1046,21 @@ input:-webkit-autofill:active {
     margin: 0px 4px;
 }
 
-.add_expense_btn {
+.add_expense_a {
     background-color: #F2B202;
+    color: black;
+    font-size: 12px;
     border: none;
     height: 100%;
     outline: none;
     cursor: pointer;
-    padding: 10px;
+    padding: 0 10px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
 
-.add_expense_btn:hover {
+.add_expense_a:hover {
     background-color: #F53D00;
 }
 

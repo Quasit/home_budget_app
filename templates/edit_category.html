@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div>
-    <form class="go_back_form"><button class="go_back_btn" type="submit" formaction="{{ url_for('budget_settings', budget_id=budget_id, budget=budget ) }}">< Wstecz</button></form>
+    <div class="go_back_form"><a class="go_back_a" href="{{ url_for('budget_settings', budget_id=budget_id, budget=budget ) }}">< Wstecz</a></div>
 </div>
 <div class="add_category_wrapper">
     <div class="add_category_form_table">
