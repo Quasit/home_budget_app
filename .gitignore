@@ -9,4 +9,6 @@ temp.txt
 script/config.py
 .pytest_cache
 /instance
+/htmlcov
+.coverage
 *.egg-info/

@@ -36,7 +36,7 @@ def add_test_data():
 
     db.session.flush()
 
-    # Test categories only for budget 1
+    # Test categories / only for budget 1
 
     category1 = Category(name='test_category1', description='test_category_1_description', budget_id=budget1.id, color='#ffffff')
     category2 = Category(name='test_category2', description='test_category_2_description', budget_id=budget1.id, color='#000000')
@@ -46,8 +46,7 @@ def add_test_data():
 
     db.session.flush()
 
-
-    # Test expenses only for budget 1
+    # Test expenses only / for budget 1
 
     date1 = datetime.strptime('2022-12-31', '%Y-%m-%d').date()
     date2 = datetime.strptime('2022-12-30', '%Y-%m-%d').date()
@@ -81,6 +80,39 @@ def add_test_data():
 
     db.session.flush()
 
-    #Still need to add UsedBy records
+    # Test UsedBy records / only for budget 1
+    # Expense 1 (payer: User1) - Used_by: User1
+    # Expense 2 (payer: User2) - Used_by: User2
+    # Expense 3 (payer: User1) - Used_by: User1
+    # Expense 4 (payer: User1) - Used_by: User1, User2
+    # Expense 5 (payer: User2) - Used_by: User1
+    # Expense 6 (payer: User1) - Used_by: User2
+    # Expense 7 (payer: User2) - Used_by: User1, User2
+
+    
+    used_by_1 = UsedBy(expense_id=expense1.id, user_id=user1.id)  # Expense 1
+
+    used_by_2 = UsedBy(expense_id=expense2.id, user_id=user2.id)  # Expense 2
+
+    used_by_3 = UsedBy(expense_id=expense3.id, user_id=user1.id)  # Expense 3
+
+    used_by_4 = UsedBy(expense_id=expense4.id, user_id=user1.id)  # Expense 4
+    used_by_5 = UsedBy(expense_id=expense4.id, user_id=user2.id)  # Expense 4
+
+    used_by_6 = UsedBy(expense_id=expense5.id, user_id=user1.id)  # Expense 5
+
+    used_by_7 = UsedBy(expense_id=expense6.id, user_id=user2.id)  # Expense 6
+
+    used_by_8 = UsedBy(expense_id=expense7.id, user_id=user1.id)  # Expense 7
+    used_by_9 = UsedBy(expense_id=expense7.id, user_id=user2.id)  # Expense 7
+
+    used_by_list = [used_by_1, used_by_2, used_by_3, used_by_4,
+                    used_by_5, used_by_6, used_by_7, used_by_8, 
+                    used_by_9]
+    
+    db.session.add_all(used_by_list)
+
+    db.session.flush()
+
 
     db.session.commit()
