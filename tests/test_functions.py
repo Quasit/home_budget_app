@@ -119,7 +119,7 @@ def test_get_default_period_dates(app_ctx):
         get_default_period_dates('wrong_period')
     assert str(wrong_period_case.value) == "Wrong period, should be one from the list: ['this_month', 'this_year', 'one_year']"
 
-    today = datetime.today()
+    today = datetime.today().date()
 
     this_month_begin = today.replace(day=1).date()
     this_month_end = today.replace(day=monthrange(today.year, today.month)[1]).date()
@@ -186,6 +186,7 @@ def test_get_expenses_from_period(app_ctx):
 
 
 def test_get_expense_summary(app_ctx):
+    # one test left to fill here
     pass
 
 
