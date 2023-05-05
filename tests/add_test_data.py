@@ -10,8 +10,20 @@ def add_test_data():
     user2 = User(username='second_test_user', email='test2@email.com', virtual=False)
     user2.set_password('test2')
 
+    user3 = User(username='third_test_user', email='test3@email.com', virtual=False)
+    user3.set_password('test3')
+
+    user4 = User(username='fourth_test_user', email='test4@email.com', virtual=False)
+    user4.set_password('test4')
+
+    user5 = User(username='fifth_test_user', email='test5@email.com', virtual=False)
+    user5.set_password('test5')
+
     db.session.add(user1)
     db.session.add(user2)
+    db.session.add(user3)
+    db.session.add(user4)
+    db.session.add(user5)
 
     db.session.flush()
 
@@ -26,13 +38,19 @@ def add_test_data():
 
     db.session.flush()
 
-    # Test user allowance : budget1: user1(editor=True), user2(editor=False) | budget2: user2(editor=True)
+    # Test user allowance :
+    # budget1: user1(editor=True), user2(editor=False), user3(editor=False), user4(editor=False), user5(editor=False)
+    # budget2: user2(editor=True)
     budget1_allowed1 = AllowedUsers(budget_id=budget1.id, user_id=user1.id, editor=True)
     budget1_allowed2 = AllowedUsers(budget_id=budget1.id, user_id=user2.id, editor=False)
+    budget1_allowed3 = AllowedUsers(budget_id=budget1.id, user_id=user3.id, editor=False)
+    budget1_allowed4 = AllowedUsers(budget_id=budget1.id, user_id=user4.id, editor=False)
+    budget1_allowed5 = AllowedUsers(budget_id=budget1.id, user_id=user5.id, editor=False)
 
     budget2_allowed1 = AllowedUsers(budget_id=budget2.id, user_id=user2.id, editor=True)
 
-    db.session.add_all([budget1_allowed1, budget1_allowed2, budget2_allowed1])
+    db.session.add_all([budget1_allowed1, budget1_allowed2, budget1_allowed3,
+                       budget1_allowed4, budget1_allowed5, budget2_allowed1])
 
     db.session.flush()
 
@@ -48,10 +66,11 @@ def add_test_data():
 
     # Test expenses only / for budget 1
 
-    date1 = datetime.strptime('2022-12-31', '%Y-%m-%d').date()
+    date1 = datetime.today().date()
     date2 = datetime.strptime('2022-12-30', '%Y-%m-%d').date()
     date3 = datetime.strptime('2022-06-30', '%Y-%m-%d').date()
     date4 = datetime.strptime('1999-01-01', '%Y-%m-%d').date()
+    date5 = datetime.strptime('2021-06-15', '%Y-%m-%d').date()
 
     expense1 = Expense(name='test_expense1', description='test_expense_1_description', budget_id=budget1.id,
                             category_id=category1.id, date=date1, amount='100.01', payer=user1.id)
@@ -63,16 +82,16 @@ def add_test_data():
                             category_id=category2.id, date=date3, amount='30.00', payer=user1.id)
     
     expense4 = Expense(name='test_expense4', description='test_expense_4_description', budget_id=budget1.id,
-                            category_id=category1.id, date=date4, amount='2000.00', payer=user1.id)
+                            category_id=category1.id, date=date5, amount='2000.00', payer=user1.id)
     
     expense5 = Expense(name='test_expense5', description='test_expense_5_description', budget_id=budget1.id,
-                            category_id=category1.id, amount='150.00', payer=user2.id)
+                            category_id=category1.id, date=date5, amount='150.00', payer=user2.id)
     
     expense6 = Expense(name='test_expense6', description='test_expense_6_description', budget_id=budget1.id,
-                            category_id=category2.id, amount='180.00', payer=user1.id)
+                            category_id=category2.id, date=date5, amount='180.00', payer=user1.id)
     
     expense7 = Expense(name='test_expense7', description='test_expense_7_description', budget_id=budget1.id,
-                            category_id=category2.id, amount='200.00', payer=user2.id)
+                            category_id=category2.id, date=date4, amount='200.00', payer=user2.id)
     
     expenses = [expense1, expense2, expense3, expense4, expense5, expense6, expense7]
 
@@ -87,7 +106,7 @@ def add_test_data():
     # Expense 4 (payer: User1) - Used_by: User1, User2
     # Expense 5 (payer: User2) - Used_by: User1
     # Expense 6 (payer: User1) - Used_by: User2
-    # Expense 7 (payer: User2) - Used_by: User1, User2
+    # Expense 7 (payer: User2) - Used_by: User1, User2, User3, User4, User5
 
     
     used_by_1 = UsedBy(expense_id=expense1.id, user_id=user1.id)  # Expense 1
@@ -105,10 +124,13 @@ def add_test_data():
 
     used_by_8 = UsedBy(expense_id=expense7.id, user_id=user1.id)  # Expense 7
     used_by_9 = UsedBy(expense_id=expense7.id, user_id=user2.id)  # Expense 7
+    used_by_10 = UsedBy(expense_id=expense7.id, user_id=user3.id)  # Expense 7
+    used_by_11 = UsedBy(expense_id=expense7.id, user_id=user4.id)  # Expense 7
+    used_by_12 = UsedBy(expense_id=expense7.id, user_id=user5.id)  # Expense 7
 
     used_by_list = [used_by_1, used_by_2, used_by_3, used_by_4,
                     used_by_5, used_by_6, used_by_7, used_by_8, 
-                    used_by_9]
+                    used_by_9, used_by_10, used_by_11, used_by_12]
     
     db.session.add_all(used_by_list)
 

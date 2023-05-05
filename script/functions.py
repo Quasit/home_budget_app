@@ -134,11 +134,13 @@ def get_default_period_dates(period=None):
 
 def get_expenses_from_period(budget_id= None, begin_date=None, end_date=None):
     """ Takes 3 arguments "budget_id", "begin_date" and "end_date" and returns list of all expenses between those dates
-        If at least 1 argument is not specified raises Exception Error"""
+        If at least 1 argument is not specified raises Exception"""
     if budget_id is None or begin_date is None or end_date is None:
         raise Exception("At least one passed argument is not specified")
     if not isinstance(begin_date, date) or not isinstance(end_date, date):
         raise TypeError('Wrong date type, dates should be in datetime.date type')
+    if begin_date > end_date:
+        raise Exception("begin_date cannot be higher than the end_date")
     expenses = db.session.query(Expense, Category).filter_by(budget_id=budget_id).filter(Expense.date >= begin_date, Expense.date <= end_date).order_by(Expense.date).join(Category).all()
     return expenses
 
@@ -188,5 +190,5 @@ def get_expense_summary(expense_list):
 def get_allowed_users_ids(budget_id):
     """ Function takes budget_id and returns list of User.id's from AllowedUsers table"""
     allowed_users = AllowedUsers.query.filter_by(budget_id=budget_id).all()
-    allowed_users_list = [user.id for user in allowed_users]
+    allowed_users_list = [user.user_id for user in allowed_users]
     return allowed_users_list
