@@ -114,20 +114,20 @@ def get_default_period_dates(period=None):
     if period == None:
         raise Exception("Period not specified")
 
-    today = datetime.today()
+    today = datetime.today().date()
 
     if period == "this_month":
-        this_month_begin = today.replace(day=1).date()
-        this_month_end = today.replace(day=monthrange(this_month_begin.year, this_month_begin.month)[1]).date()
+        this_month_begin = today.replace(day=1)
+        this_month_end = today.replace(day=monthrange(this_month_begin.year, this_month_begin.month)[1])
         return this_month_begin, this_month_end
 
     elif period == "this_year":
-        this_year_begin = today.replace(month=1, day=1).date()
-        this_year_end = today.replace(month=12, day=31).date()
+        this_year_begin = today.replace(month=1, day=1)
+        this_year_end = today.replace(month=12, day=31)
         return this_year_begin, this_year_end
 
     elif period == "one_year":
-        one_year_period_begin = (today - timedelta(weeks=52)).date()
+        one_year_period_begin = (today - timedelta(weeks=52))
         return one_year_period_begin, today
     
     raise Exception("Wrong period, should be one from the list: ['this_month', 'this_year', 'one_year']")

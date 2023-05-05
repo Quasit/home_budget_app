@@ -121,17 +121,17 @@ def test_get_default_period_dates(app_ctx):
 
     today = datetime.today().date()
 
-    this_month_begin = today.replace(day=1).date()
-    this_month_end = today.replace(day=monthrange(today.year, today.month)[1]).date()
+    this_month_begin = today.replace(day=1)
+    this_month_end = today.replace(day=monthrange(today.year, today.month)[1])
     this_month = get_default_period_dates('this_month')
     assert this_month == (this_month_begin, this_month_end)
 
-    this_year_begin = today.replace(month=1, day=1).date()
-    this_year_end = today.replace(month=12, day=31).date()
+    this_year_begin = today.replace(month=1, day=1)
+    this_year_end = today.replace(month=12, day=31)
     this_year = get_default_period_dates('this_year')
     assert this_year == (this_year_begin, this_year_end)
     
-    one_year_period_begin = (today - timedelta(weeks=52)).date()
+    one_year_period_begin = (today - timedelta(weeks=52))
     one_year = get_default_period_dates('one_year')
     assert one_year == (one_year_period_begin, today)
 
