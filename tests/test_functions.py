@@ -1,10 +1,44 @@
+from string import hexdigits
 import pytest
 from datetime import datetime, timedelta
 from calendar import monthrange
-from script.functions import (get_allowed_budgets_list, get_used_by_list_by_expense_id,
-                              get_used_by_short, get_used_by_long, get_categories_dict,
-                              get_expenses, get_default_period_dates, get_expenses_from_period,
-                              get_expense_summary, get_allowed_users_ids)
+from script.functions import (sort_func, random_color, get_allowed_budgets_list,
+                            get_used_by_list_by_expense_id, get_used_by_short,
+                            get_used_by_long, get_categories_dict, get_expenses,
+                            get_default_period_dates, get_expenses_from_period,
+                            get_expense_summary, get_allowed_users_ids)
+
+
+def test_sort_func():
+    list = [
+        {'value': 5, 'date': datetime.strptime('2005-05-05', '%Y-%m-%d').date()},
+        {'value': 3, 'date': datetime.strptime('2003-03-03', '%Y-%m-%d').date()},
+        {'value': 1, 'date': datetime.strptime('2001-01-01', '%Y-%m-%d').date()},
+        {'value': 2, 'date': datetime.strptime('2002-02-02', '%Y-%m-%d').date()},
+        {'value': 4, 'date': datetime.strptime('2004-04-04', '%Y-%m-%d').date()}
+        ]
+    list.sort(key=sort_func)
+
+    list_sorted = [
+        {'value': 1, 'date': datetime.strptime('2001-01-01', '%Y-%m-%d').date()},
+        {'value': 2, 'date': datetime.strptime('2002-02-02', '%Y-%m-%d').date()},
+        {'value': 3, 'date': datetime.strptime('2003-03-03', '%Y-%m-%d').date()},
+        {'value': 4, 'date': datetime.strptime('2004-04-04', '%Y-%m-%d').date()},
+        {'value': 5, 'date': datetime.strptime('2005-05-05', '%Y-%m-%d').date()}
+        ]
+
+    assert list == list_sorted
+
+
+@pytest.mark.parametrize('execution_number', range(5))
+def test_random_color(execution_number):
+    color = random_color()
+    assert color[0] == '#'
+    assert all(char in hexdigits for char in color[1:])
+    assert int(color[1:3], 16) >= 0 and int(color[1:3], 16) <= 255
+    assert int(color[3:5], 16) >= 0 and int(color[3:5], 16) <= 255
+    assert int(color[5:], 16) >= 0 and int(color[5:], 16) <= 255
+
 
 def test_get_allowed_budgets_list(app_ctx):
     budgets_user1 = get_allowed_budgets_list(1)
@@ -157,9 +191,6 @@ def test_get_expenses_from_period(app_ctx):
         get_expenses_from_period(1, datetime.today(), datetime.today().time())
     assert str(wrong_second_date_format.value) == "Wrong date type, dates should be in datetime.date type"
 
-
-
-
     today_expenses = get_expenses_from_period(1, datetime.today().date(), datetime.today().date())
 
     assert len(today_expenses) == 1
@@ -187,8 +218,17 @@ def test_get_expenses_from_period(app_ctx):
 
 def test_get_expense_summary(app_ctx):
     # one test left to fill here
-    pass
+    begin_1 = datetime.strptime('1999-01-01', '%Y-%m-%d').date()
+    end_1 = datetime.today().date()
 
+    expenses_list_1 = get_expenses_from_period(1, begin_1, end_1)
+    expenes_summary_1 = get_expense_summary(expenses_list_1)
+
+    assert expenes_summary_1['total'] == '2710.01'
+    assert expenes_summary_1['categories_summary'] == {'test_category1': '2300.01', 'test_category2' : '410.00'}
+    assert expenes_summary_1['categories_labels'] == ['test_category2', 'test_category1']
+    assert expenes_summary_1['categories_colors'] == ['#000000', '#ffffff']
+    assert expenes_summary_1['categories_dataset'] == [410.00, 2300.01]
 
 def test_get_allowed_users_ids(app_ctx):
     first_budget = get_allowed_users_ids(1)
