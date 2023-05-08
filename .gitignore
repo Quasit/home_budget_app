@@ -1,7 +1,6 @@
 .venv
 .vscode
 add_db_data.py
-script/color_testing.py
 templates/testing.html
 budget_database.db
 temp.txt

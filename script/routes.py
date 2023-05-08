@@ -27,7 +27,6 @@ def get_allowed_budgets():
 general.before_app_request(get_allowed_budgets)
 
 
-
 @general.route('/')
 def index():
     return render_template('main_page.html')
