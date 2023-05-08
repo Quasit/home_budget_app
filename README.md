@@ -145,7 +145,7 @@ Below are listed features that I have already implemented in the project
 - [ ] Adding other Users to Budgets in Budget settings page
 - [x] Pytest fixtures and test database prep
 - [x] Unit tests for app and database setup
-- [ ] Unit tests for functions
+- [x] Unit tests for functions
 - [ ] Unit tests for routes
 
 
