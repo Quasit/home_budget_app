@@ -30,10 +30,10 @@ class MultiCheckboxAtLeastOne():
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Nazwa użytkownika', validators=[DataRequired()])
-    email = StringField('E-mail', validators=[DataRequired(), Email()])
-    password = PasswordField('Hasło', validators=[DataRequired()])
-    password2 = PasswordField('Powtórz Hasło', validators=[DataRequired(), EqualTo('password')])
+    username = StringField('Nazwa użytkownika', validators=[DataRequired("Pole nie może być puste.")])
+    email = StringField('E-mail', validators=[DataRequired("Pole nie może być puste."), Email("Nieprawidłowy format adresu email.")])
+    password = PasswordField('Hasło', validators=[DataRequired("Pole nie może być puste.")])
+    password2 = PasswordField('Powtórz Hasło', validators=[DataRequired("Pole nie może być puste."), EqualTo('password', "Hasła nie mogą się różnić.")])
     submit = SubmitField('Zarejestruj')
 
     def validate_username(self, username):
@@ -47,8 +47,8 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Ten adres email jest już zajęty. Proszę użyć innego adresu email.')
 
 class LoginForm(FlaskForm):
-    username = StringField('Nazwa użytkownika', validators=[DataRequired()])
-    password = PasswordField('Hasło', validators=[DataRequired()])
+    username = StringField('Nazwa użytkownika', validators=[DataRequired("Pole nie może być puste.")])
+    password = PasswordField('Hasło', validators=[DataRequired("Pole nie może być puste.")])
     remember_me = BooleanField('Zapamiętaj mnie')
     submit = SubmitField('Zaloguj')
 

@@ -1,5 +1,4 @@
 from script.models import User
-import json
 
 
 # CURRENT ROUTES
@@ -84,6 +83,49 @@ def test_register_post(client, app_ctx):
     assert user.username == 'test_post_username'
 
 
+def test_register_post_taken_data(client):
+    form_data = {'username': 'test_user',
+        'email': 'test2@email.com',
+        'password': 'testpostpassword',
+        'password2': 'testpostpassword'
+        }
+    response = client.post('/register', data=form_data)
+    assert response.status_code == 200
+    assert 'Ta nazwa użytkownika jest już zajęta. Proszę użyć innej nazwy użytkownika.'.encode() in response.data
+    assert 'Ten adres email jest już zajęty. Proszę użyć innego adresu email.'.encode() in response.data
+
+
+def test_register_post_wrong_data(client):
+    form_data = {'username': 'test_post_username',
+        'email': 'email',
+        'password': 'testpostpassword',
+        'password2': 'wrong_password'
+        }
+    response = client.post('/register', data=form_data)
+    assert response.status_code == 200
+    assert 'Nieprawidłowy format adresu email'.encode() in response.data
+    assert 'Hasła nie mogą się różnić'.encode() in response.data
+
+
+def test_register_post_empty_data(client):
+    error_tr = '<tr class="register_errors">\n                    <td></td>\n                    <td>Pole nie może być puste.</td>'
+    username_err = '<input id="username" name="username" required size="32" type="text" value=""></td>\n                </tr>\n                \n                ' + error_tr
+    email_err = '<input id="email" name="email" required size="32" type="text" value=""></td>\n                </tr>\n                \n                ' + error_tr
+    password_err = '<input id="password" name="password" required size="32" type="password" value=""></td>\n                </tr>\n                \n                ' + error_tr
+    password2_err = '<input id="password2" name="password2" required size="32" type="password" value=""></td>\n                </tr>\n                \n                ' + error_tr
+    form_data = {'username': '',
+        'email': '',
+        'password': '',
+        'password2': ''
+        }
+    response = client.post('/register', data=form_data)
+    assert response.status_code == 200
+    assert username_err.encode() in response.data
+    assert email_err.encode() in response.data
+    assert password_err.encode() in response.data
+    assert password2_err.encode() in response.data
+
+
 # ----------------------------
 # '/login' TESTS
 # ----------------------------
@@ -118,6 +160,40 @@ def test_login_post_redirect(client):
     assert b"Wyloguj" in response.data
 
 
+def test_login_post_wrong_username(client):
+    form_data = {'username': 'wrong_username',
+                 'password': 'test',
+                 'remember_me': False
+                 }
+    response = client.post('/login', data=form_data, follow_redirects=True)
+    assert response.status_code == 200
+    assert '<p class="flashes">\n        \n        Invalid username or password\n        \n    </p>'.encode() in response.data
+
+
+def test_login_post_wrong_password(client):
+    form_data = {'username': 'test_user',
+                 'password': 'wrong_password',
+                 'remember_me': False
+                 }
+    response = client.post('/login', data=form_data, follow_redirects=True)
+    assert response.status_code == 200
+    assert '<p class="flashes">\n        \n        Invalid username or password\n        \n    </p>'.encode() in response.data
+
+
+def test_login_post_empty_data(client):
+    error_tr = '<tr class="login_errors">\n                    <td></td>\n                    <td>Pole nie może być puste.</td>'
+    username_err = '<input id="username" name="username" required size="32" type="text" value=""></td>\n                </tr>\n                \n                ' + error_tr
+    password_err = '<input id="password" name="password" required size="32" type="password" value=""></td>\n                </tr>\n                \n                ' + error_tr
+    form_data = {'username': '',
+        'password': '',
+        'remember_me': False
+        }
+    response = client.post('/login', data=form_data)
+    assert response.status_code == 200
+    assert username_err.encode() in response.data
+    assert password_err.encode() in response.data
+
+
 # ----------------------------
 # '/logout' TESTS
 # ----------------------------
@@ -148,3 +224,9 @@ def test_my_budgets_route(client_logged_usr2):
 # ----------------------------
 # '/budget/add_budget' TESTS
 # ----------------------------
+
+def test_add_budget_get(client_logged_usr1):
+    pass
+    # response = client_logged_usr1.get('/budget/add_budget')
+    # print(response.data)
+    # assert False
