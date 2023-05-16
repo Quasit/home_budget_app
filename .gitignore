@@ -7,6 +7,7 @@ temp.txt
 *__pycache__
 script/config.py
 .pytest_cache
+tests/response_data.txt
 /instance
 /htmlcov
 .coverage

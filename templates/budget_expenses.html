@@ -8,14 +8,14 @@
             <h1>{{ budget.name }}</h1>
         </div>
         <div class="budget-menu">
-            <div class="budget-menu-form"><a class="budget-menu-a" href="{{ url_for('budget_settings', budget_id=budget.id, budget=budget ) }}">&#128736 Ustawienia</a></div>
-            <div class="budget-menu-form"><a class="budget-menu-a" href="{{ url_for('expenses', budget_id=budget.id, budget=budget ) }}">&#128197 Wydatki</a></div>
-            <div class="budget-menu-form"><a class="budget-menu-a" href="{{ url_for('budget', budget_id=budget.id, budget=budget ) }}">&#128202 Podsumowanie</a></div>
+            <div class="budget-menu-form"><a class="budget-menu-a" href="{{ url_for('budget_settings', budget_id=budget.id) }}">&#128736 Ustawienia</a></div>
+            <div class="budget-menu-form"><a class="budget-menu-a" href="{{ url_for('expenses', budget_id=budget.id) }}">&#128197 Wydatki</a></div>
+            <div class="budget-menu-form"><a class="budget-menu-a" href="{{ url_for('budget', budget_id=budget.id) }}">&#128202 Podsumowanie</a></div>
         </div>
     </div>
     <hr/>
     <div class="add_expense">
-        <div class="add_expense_form"><a class="add_expense_a" href="{{ url_for('add_expense', budget_id=budget.id, budget=budget ) }}">Dodaj wpis</a></div>
+        <div class="add_expense_form"><a class="add_expense_a" href="{{ url_for('add_expense', budget_id=budget.id) }}">Dodaj wpis</a></div>
     </div>
     <hr style="margin-bottom: 0;" />
     <div class="budget-expenses-table-wrapper" id="budget-expenses-table-wrapper">

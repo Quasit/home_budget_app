@@ -30,10 +30,10 @@ class MultiCheckboxAtLeastOne():
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Nazwa użytkownika', validators=[DataRequired("Pole nie może być puste.")])
-    email = StringField('E-mail', validators=[DataRequired("Pole nie może być puste."), Email("Nieprawidłowy format adresu email.")])
-    password = PasswordField('Hasło', validators=[DataRequired("Pole nie może być puste.")])
-    password2 = PasswordField('Powtórz Hasło', validators=[DataRequired("Pole nie może być puste."), EqualTo('password', "Hasła nie mogą się różnić.")])
+    username = StringField('Nazwa użytkownika', validators=[DataRequired("Pole Nazwa użytkownika nie może być puste.")])
+    email = StringField('E-mail', validators=[DataRequired("Pole E-mail nie może być puste."), Email("Nieprawidłowy format adresu email.")])
+    password = PasswordField('Hasło', validators=[DataRequired("Pole Hasło nie może być puste.")])
+    password2 = PasswordField('Powtórz Hasło', validators=[DataRequired("Pole Powtórz Hasło nie może być puste."), EqualTo('password', "Hasła nie mogą się różnić.")])
     submit = SubmitField('Zarejestruj')
 
     def validate_username(self, username):
@@ -47,13 +47,13 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Ten adres email jest już zajęty. Proszę użyć innego adresu email.')
 
 class LoginForm(FlaskForm):
-    username = StringField('Nazwa użytkownika', validators=[DataRequired("Pole nie może być puste.")])
-    password = PasswordField('Hasło', validators=[DataRequired("Pole nie może być puste.")])
+    username = StringField('Nazwa użytkownika', validators=[DataRequired("Pole Nazwa użytkownika nie może być puste.")])
+    password = PasswordField('Hasło', validators=[DataRequired("Pole Hasło nie może być puste.")])
     remember_me = BooleanField('Zapamiętaj mnie')
     submit = SubmitField('Zaloguj')
 
 class BudgetForm(FlaskForm):
-    name = StringField('Nazwa budżetu', validators=[DataRequired()])
+    name = StringField('Nazwa budżetu', validators=[DataRequired("Pole Nazwa budżetu nie może być puste.")])
     description = TextAreaField('Opis (opcjonalne)')
     submit = SubmitField('Wyślij')
 

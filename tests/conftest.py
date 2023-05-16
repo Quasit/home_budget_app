@@ -5,6 +5,16 @@ from script.routes import general
 from script.models import create_tables_if_not_exist, User
 from flask_login import FlaskLoginClient
 
+def pytest_configure(config):
+    config.addinivalue_line("markers", "index: index route tests")
+    config.addinivalue_line("markers", "register: register route tests")
+    config.addinivalue_line("markers", "login: login route tests")
+    config.addinivalue_line("markers", "logout: logout route tests")
+    config.addinivalue_line("markers", "my_budgets: my_budgets route tests")
+    config.addinivalue_line("markers", "add_budget: add_budget route tests")
+    config.addinivalue_line("markers", "budget_summary: /budget/<int:budget_id> route tests")
+
+
 @pytest.fixture
 def app():
     

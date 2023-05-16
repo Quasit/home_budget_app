@@ -9,9 +9,9 @@
             <h1>{{ budget.name }}</h1>
         </div>
         <div class="budget-menu">
-            <div class="budget-menu-form"><a class="budget-menu-a" href="{{ url_for('budget_settings', budget_id=budget.id, budget=budget ) }}">&#128736 Ustawienia</a></div>
-            <div class="budget-menu-form"><a class="budget-menu-a" href="{{ url_for('expenses', budget_id=budget.id, budget=budget ) }}">&#128197 Wydatki</a></div>
-            <div class="budget-menu-form"><a class="budget-menu-a" href="{{ url_for('budget', budget_id=budget.id, budget=budget ) }}">&#128202 Podsumowanie</a></div>
+            <div class="budget-menu-form"><a class="budget-menu-a" href="{{ url_for('budget_settings', budget_id=budget.id) }}">&#128736 Ustawienia</a></div>
+            <div class="budget-menu-form"><a class="budget-menu-a" href="{{ url_for('expenses', budget_id=budget.id) }}">&#128197 Wydatki</a></div>
+            <div class="budget-menu-form"><a class="budget-menu-a" href="{{ url_for('budget', budget_id=budget.id) }}">&#128202 Podsumowanie</a></div>
         </div>
     </div>
     <hr style="margin-bottom: 0;">
@@ -38,7 +38,7 @@
                         </tr>
                         <tr>
                             <td>Wydatki:</td>
-                            <td>{{ expenses_summary['this_month']['total'] }} zł</td>
+                            <td id="this_month-balance-expenses_total">{{ expenses_summary['this_month']['total'] }} zł</td>
                         </tr>
                     </table>
                 </div>
@@ -49,12 +49,12 @@
                     <table class="budget table">
                         <tr class="first-row">
                             <td><b>SUMA:</b></td>
-                            <td>{{ expenses_summary['this_month']['total'] }} zł</td>
+                            <td id="this_month-expenses-expenses_total">{{ expenses_summary['this_month']['total'] }} zł</td>
                         </tr>
                         {% for key, value in expenses_summary['this_month']['categories_summary'].items() %}
                         <tr>
-                            <td>{{key}}</td>
-                            <td>{{value}} zł</td>
+                            <td id="this_month-expenses-category_name">{{key}}</td>
+                            <td id="this_month-expenses-category_total">{{value}} zł</td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -101,7 +101,7 @@
                         </tr>
                         <tr>
                             <td>Wydatki:</td>
-                            <td>{{ expenses_summary['this_year']['total'] }} zł</td>
+                            <td id="this_year-balance-expenses_total">{{ expenses_summary['this_year']['total'] }} zł</td>
                         </tr>
                     </table>
                 </div>
@@ -112,12 +112,12 @@
                     <table>
                         <tr class="first-row">
                             <td><b>SUMA:</b></td>
-                            <td>{{ expenses_summary['this_year']['total'] }} zł</td>
+                            <td id="this_year-expenses-expenses_total">{{ expenses_summary['this_year']['total'] }} zł</td>
                         </tr>
                         {% for key, value in expenses_summary['this_year']['categories_summary'].items() %}
                         <tr>
-                            <td>{{key}}</td>
-                            <td>{{value}} zł</td>
+                            <td id="this_year-expenses-category_name">{{key}}</td>
+                            <td id="this_year-expenses-category_total">{{value}} zł</td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -164,7 +164,7 @@
                         </tr>
                         <tr>
                             <td>Wydatki:</td>
-                            <td>{{ expenses_summary['one_year_period']['total'] }} zł</td>
+                            <td id="one_year_period-balance-expenses_total">{{ expenses_summary['one_year_period']['total'] }} zł</td>
                         </tr>
                     </table>
                 </div>
@@ -175,12 +175,12 @@
                     <table>
                         <tr class="first-row">
                             <td><b>SUMA:</b></td>
-                            <td>{{ expenses_summary['one_year_period']['total'] }} zł</td>
+                            <td id="one_year_period-expenses-expenses_total">{{ expenses_summary['one_year_period']['total'] }} zł</td>
                         </tr>
                         {% for key, value in expenses_summary['one_year_period']['categories_summary'].items() %}
                         <tr>
-                            <td>{{key}}</td>
-                            <td>{{value}} zł</td>
+                            <td id="one_year_period-expenses-category_name">{{key}}</td>
+                            <td id="one_year_period-expenses-category_total">{{value}} zł</td>
                         </tr>
                         {% endfor %}
                     </table>
