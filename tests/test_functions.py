@@ -217,7 +217,6 @@ def test_get_expenses_from_period(app_ctx):
 
 
 def test_get_expense_summary(app_ctx):
-    # one test left to fill here
     begin_1 = datetime.strptime('1999-01-01', '%Y-%m-%d').date()
     end_1 = datetime.today().date()
 

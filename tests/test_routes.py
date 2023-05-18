@@ -1,5 +1,7 @@
-from script.models import User, Budget, AllowedUsers
+from script.models import User, Budget, AllowedUsers, Expense
+from script.functions import get_expenses
 import pytest
+from datetime import datetime
 
 def response_to_file(response):
     with open("tests/response_data.txt", "w") as response_file:
@@ -13,8 +15,8 @@ def response_to_file(response):
 # '/logout' - DONE
 # '/my_budgets' - DONE
 # '/budget/add_budget' - DONE
-# '/budget/<int:budget_id>'
-# '/budget/<int:budget_id>/expenses'
+# '/budget/<int:budget_id>' - DONE
+# '/budget/<int:budget_id>/expenses' - DONE
 # '/budget/<int:budget_id>/add_expense'
 # '/budget/<int:budget_id>/edit_expense/<int:expense_id>'
 # '/budget/<int:budget_id>/remove_expense/<int:expense_id>'
@@ -292,16 +294,15 @@ def test_add_budget_post_empty_name(client_logged_usr1, app_ctx):
 # ----------------------------
 
 @pytest.mark.budget_summary
-def test_budget_get_budget_menu(client_logged_usr1):
+def test_budget_summary_get_budget_menu(client_logged_usr1):
     response = client_logged_usr1.get('/budget/1')
-
     assert '<div class="budget-menu-form"><a class="budget-menu-a" href="/budget/1/settings">&#128736 Ustawienia</a></div>'.encode() in response.data
     assert '<div class="budget-menu-form"><a class="budget-menu-a" href="/budget/1/expenses">&#128197 Wydatki</a></div>'.encode() in response.data
     assert '<div class="budget-menu-form"><a class="budget-menu-a" href="/budget/1">&#128202 Podsumowanie</a></div>'.encode() in response.data
 
 
 @pytest.mark.budget_summary
-def test_budget_get_this_month_summary(client_logged_usr1):
+def test_budget_summary_get_this_month_summary(client_logged_usr1):
     response = client_logged_usr1.get('/budget/1')
     assert '<td id="this_month-balance-expenses_total">100.01 zł</td>'.encode() in response.data
     assert '<td id="this_month-expenses-expenses_total">100.01 zł</td>'.encode() in response.data
@@ -310,7 +311,7 @@ def test_budget_get_this_month_summary(client_logged_usr1):
 
 
 @pytest.mark.budget_summary
-def test_budget_get_this_year_summary(client_logged_usr1):
+def test_budget_summary_get_this_year_summary(client_logged_usr1):
     response = client_logged_usr1.get('/budget/1')
     assert '<td id="this_year-balance-expenses_total">100.01 zł</td>'.encode() in response.data
     assert '<td id="this_year-expenses-expenses_total">100.01 zł</td>'.encode() in response.data
@@ -319,7 +320,7 @@ def test_budget_get_this_year_summary(client_logged_usr1):
 
 
 @pytest.mark.budget_summary
-def test_budget_get_one_year_period_summary(client_logged_usr1):
+def test_budget_summary_get_one_year_period_summary(client_logged_usr1):
     response = client_logged_usr1.get('/budget/1')
     assert '<td id="one_year_period-balance-expenses_total">180.01 zł</td>'.encode() in response.data
     assert '<td id="one_year_period-expenses-expenses_total">180.01 zł</td>'.encode() in response.data
@@ -330,10 +331,102 @@ def test_budget_get_one_year_period_summary(client_logged_usr1):
 
 
 @pytest.mark.budget_summary
-def test_budget_get_chart_script(client_logged_usr1):
+def test_budget_summary_get_chart_script(client_logged_usr1):
     response = client_logged_usr1.get('/budget/1')
     assert 'buildChart("chart_current_month", [\'test_category1\'], [100.01], [\'#ffffff\'])'.encode() in response.data
     assert 'buildChart("chart_current_year", [\'test_category1\'], [100.01], [\'#ffffff\'])'.encode() in response.data
     assert 'buildChart("chart_one_year_period", [\'test_category2\', \'test_category1\'], [30.0, 150.01], [\'#000000\', \'#ffffff\'])'.encode() in response.data
-    
-    
+
+
+# ----------------------------
+# '/budget/<int:budget_id>/expenses' TESTS
+# ----------------------------
+
+@pytest.mark.budget_expenses
+def test_budget_expenses_get_menu(client_logged_usr1):
+    response = client_logged_usr1.get('/budget/1/expenses')
+    assert '<div class="budget-menu-form"><a class="budget-menu-a" href="/budget/1/settings">&#128736 Ustawienia</a></div>'.encode() in response.data
+    assert '<div class="budget-menu-form"><a class="budget-menu-a" href="/budget/1/expenses">&#128197 Wydatki</a></div>'.encode() in response.data
+    assert '<div class="budget-menu-form"><a class="budget-menu-a" href="/budget/1">&#128202 Podsumowanie</a></div>'.encode() in response.data
+
+
+@pytest.mark.budget_expenses
+def test_budget_expenses_get_add_expense_button(client_logged_usr1):
+    response = client_logged_usr1.get('/budget/1/expenses')
+    assert '<div class="add_expense_form"><a class="add_expense_a" href="/budget/1/add_expense">Dodaj wpis</a></div>'.encode() in response.data
+
+
+@pytest.mark.budget_expenses
+def test_budget_expenses_get_expenses_table(client_logged_usr1):
+    expenses = get_expenses(budget_id=1)
+    expenses_html_tables = []
+    for expense in expenses:
+        expense_html = f"""<tr>
+                    <td>{expense['id']}.</td>
+                    <td>{expense['date']}</td>
+                    <td style="text-align:right; padding-right: 40px;"><b>{'%.2f' % expense['amount']} zł</b></td>
+                    <td title="{expense['description']}">{expense['name']}</td>
+                    <td title="{expense['category_description']}">{expense['category_name']}</td>
+                    <td>{expense['payer_name']}</td>
+                    <td title="{expense['used_by_full_description']}">{expense['used_by']}</td>
+                    <td style="padding-right: 10px;">
+                        <form action="/budget/1/remove_expense/{expense['id']}" onsubmit="return confirm('Czy na pewno chcesz usunąć ten wpis?\\n{expense['name']}')"><button title="Usuń wpis" class="remove_expense_btn" type="submit"><b>X</b></button></form>
+                        <form><button title="Edytuj wpis" class="remove_expense_btn" type="submit" formaction="/budget/1/edit_expense/{expense['id']}"><b>&#9998</b></button></form>
+                    </td>
+                </tr>"""
+        expenses_html_tables.append(expense_html)
+
+    response = client_logged_usr1.get('/budget/1/expenses')
+    for expense in expenses_html_tables:
+        print(expense)
+        assert expense.encode() in response.data
+
+
+# ----------------------------
+# '/budget/<int:budget_id>/add_expense' TESTS
+# ----------------------------
+
+@pytest.mark.add_expense
+def test_add_expense_get(client_logged_usr1):
+    response = client_logged_usr1.get('/budget/1/add_expense')
+
+    assert '<div class="go_back_form"><a class="go_back_a" href="/budget/1/expenses">< Wstecz</a></div>'.encode() in response.data
+
+    assert '<td><label for="name">Nazwa</label></td>'.encode() in response.data
+    assert '<td><input id="name" name="name" required type="text" value=""></td>'.encode() in response.data
+    assert '<td><label for="description">Opis (opcjonalne)</label></td>'.encode() in response.data
+    assert '<td><textarea id="description" name="description"></textarea></td>'.encode() in response.data
+    assert '<td><label for="category">Kategoria</label></td>'.encode() in response.data
+    assert '<td><select id="category" name="category"><option value="test_category1">test_category1</option><option value="test_category2">test_category2</option></select></td>'.encode() in response.data
+    assert '<td><label for="amount">Kwota</label></td>'.encode() in response.data
+    assert '<td><input id="amount" name="amount" required step="0.01" type="text" value=""></td>'.encode() in response.data
+    assert '<td><label for="date">Data</label></td>'.encode() in response.data
+    assert '<td><input id="date" name="date" required type="text" value=""></td>'.encode() in response.data
+    assert '<td><label for="payer">Płaci</label></td>'.encode() in response.data
+    assert '<td><select id="payer" name="payer"><option value="test_user">test_user</option><option value="second_test_user">second_test_user</option><option value="third_test_user">third_test_user</option><option value="fourth_test_user">fourth_test_user</option><option value="fifth_test_user">fifth_test_user</option></select></td>'.encode() in response.data
+    assert '<td><label for="used_by">Używa</label></td>'.encode() in response.data
+    assert '<td><table id="used_by"><tr><th><label for="used_by-0">test_user</label></th><td><input id="used_by-0" name="used_by" type="checkbox" value="test_user"></td></tr><tr><th><label for="used_by-1">second_test_user</label></th><td><input id="used_by-1" name="used_by" type="checkbox" value="second_test_user"></td></tr><tr><th><label for="used_by-2">third_test_user</label></th><td><input id="used_by-2" name="used_by" type="checkbox" value="third_test_user"></td></tr><tr><th><label for="used_by-3">fourth_test_user</label></th><td><input id="used_by-3" name="used_by" type="checkbox" value="fourth_test_user"></td></tr><tr><th><label for="used_by-4">fifth_test_user</label></th><td><input id="used_by-4" name="used_by" type="checkbox" value="fifth_test_user"></td></tr></table></td>'.encode() in response.data
+    assert '<td colspan="2" style="text-align: center;"><input id="submit" name="submit" type="submit" value="Wyślij"></td>'.encode() in response.data
+
+
+@pytest.mark.add_expense
+def test_add_expense_post(client_logged_usr1, app_ctx):
+    form_data = {'name': 'test_post_expense',
+                 'description': 'test post expense description',
+                 'category': 'test_category1',
+                 'amount': 98.70,
+                 'date': datetime.today().date(),
+                 'payer': 'fourth_test_user',
+                 'used_by': ['third_test_user', 'fourth_test_user', 'fifth_test_user']
+                 }
+    response = client_logged_usr1.post('/budget/1/add_expense', data=form_data)
+    assert response.status_code == 302
+
+    new_expense = Expense.query.filter_by(name='test_post_expense').first()
+    assert new_expense.name == 'test_post_expense'
+    assert new_expense.description == 'test post expense description'
+    assert new_expense.budget_id == 1
+    assert new_expense.category_id == 1
+    assert new_expense.date == datetime.today().date()
+    assert new_expense.amount == '98.7'
+    assert new_expense.payer == 4

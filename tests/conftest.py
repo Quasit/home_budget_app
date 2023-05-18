@@ -13,6 +13,8 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "my_budgets: my_budgets route tests")
     config.addinivalue_line("markers", "add_budget: add_budget route tests")
     config.addinivalue_line("markers", "budget_summary: /budget/<int:budget_id> route tests")
+    config.addinivalue_line("markers", "budget_expenses: /budget/<int:budget_id>/expenses route tests")
+    config.addinivalue_line("markers", "add_expense: /budget/<int:budget_id>/add_expense route tests")
 
 
 @pytest.fixture

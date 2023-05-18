@@ -64,13 +64,13 @@ class CategoryForm(FlaskForm):
     submit = SubmitField('Wyślij')
 
 class ExpenseForm(FlaskForm):
-    name = StringField('Nazwa', validators=[DataRequired()])
+    name = StringField('Nazwa', validators=[DataRequired("Pole Nazwa nie może być puste.")])
     description = TextAreaField('Opis (opcjonalne)')
     category = SelectField('Kategoria', choices=[])
-    date = DateField('Data', format='%Y-%m-%d', validators=[DataRequired()])
-    amount = DecimalField('Kwota', places=2, validators=[DataRequired()])
+    date = DateField('Data', format='%Y-%m-%d', validators=[DataRequired("Pole Data nie może być puste.")])
+    amount = DecimalField('Kwota', places=2, validators=[DataRequired("Pole Kwota nie może być puste.")])
     payer = SelectField('Płaci', choices=[])
-    used_by = MultiCheckboxField('Używa', choices=[], validators=[MultiCheckboxAtLeastOne()])
+    used_by = MultiCheckboxField('Używa', choices=[], validators=[MultiCheckboxAtLeastOne("Przynajmniej jedna opcja musi być zaznaczona")])
     submit = SubmitField('Wyślij')
 
     def validate_date(form, field):
@@ -79,11 +79,11 @@ class ExpenseForm(FlaskForm):
 
     def get_categories(self, budget_id):
         categories = Category.query.filter_by(budget_id=budget_id).all()
-        category_list = [cat.name for cat in categories]
+        category_list = [(cat.name, cat.name) for cat in categories]
         return category_list
 
     def get_allowed_users_names(self, budget_id):
         allowed_users = AllowedUsers.query.filter_by(budget_id=budget_id).all()
-        allowed_users_list = [User.query.get(user.user_id).username for user in allowed_users]
+        allowed_users_list = [(User.query.get(user.user_id).username, User.query.get(user.user_id).username) for user in allowed_users]
         return allowed_users_list
         
