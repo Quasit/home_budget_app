@@ -15,7 +15,7 @@
                 {% for error in form.name.errors %}
                 <tr class="add_expense_errors">
                     <td></td>
-                    <td>{{ error }}</td>
+                    <td id="expense_name_error">{{ error }}</td>
                 </tr>
                 {% endfor %}
                 <tr>
@@ -25,7 +25,7 @@
                 {% for error in form.description.errors %}
                 <tr class="add_expense_errors">
                     <td></td>
-                    <td>{{ error }}</td>
+                    <td id="expense_description_error">{{ error }}</td>
                 </tr>
                 {% endfor %}
                 <tr>
@@ -35,17 +35,17 @@
                 {% for error in form.category.errors %}
                 <tr class="add_expense_errors">
                     <td></td>
-                    <td>{{ error }}</td>
+                    <td id="expense_category_error">{{ error }}</td>
                 </tr>
                 {% endfor %}
                 <tr>
                     <td>{{ form.amount.label }}</td>
                     <td>{{ form.amount(step='0.01') }}</td>
                 </tr>
-                {% for error in form.category.errors %}
+                {% for error in form.amount.errors %}
                 <tr class="add_expense_errors">
                     <td></td>
-                    <td>{{ error }}</td>
+                    <td id="expense_amount_error">{{ error }}</td>
                 </tr>
                 {% endfor %}
                 <tr>
@@ -55,7 +55,7 @@
                 {% for error in form.date.errors %}
                 <tr class="add_expense_errors">
                     <td></td>
-                    <td>{{ error }}</td>
+                    <td id="expense_date_error">{{ error }}</td>
                 </tr>
                 {% endfor %}
                 <tr>
@@ -65,7 +65,7 @@
                 {% for error in form.payer.errors %}
                 <tr class="add_expense_errors">
                     <td></td>
-                    <td>{{ error }}</td>
+                    <td id="expense_payer_error">{{ error }}</td>
                 </tr>
                 {% endfor %}
                 <tr>
@@ -75,7 +75,7 @@
                 {% for error in form.used_by.errors %}
                 <tr class="add_expense_errors">
                     <td></td>
-                    <td>{{ error }}</td>
+                    <td id="expense_used_by_error">{{ error }}</td>
                 </tr>
                 {% endfor %}
                 <tr>

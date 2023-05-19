@@ -1,7 +1,7 @@
 from script.models import User, Budget, AllowedUsers, Expense
 from script.functions import get_expenses
 import pytest
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def response_to_file(response):
     with open("tests/response_data.txt", "w") as response_file:
@@ -389,7 +389,7 @@ def test_budget_expenses_get_expenses_table(client_logged_usr1):
 @pytest.mark.add_expense
 def test_add_expense_get(client_logged_usr1):
     response = client_logged_usr1.get('/budget/1/add_expense')
-
+    
     assert '<div class="go_back_form"><a class="go_back_a" href="/budget/1/expenses">< Wstecz</a></div>'.encode() in response.data
 
     assert '<td><label for="name">Nazwa</label></td>'.encode() in response.data
@@ -397,13 +397,13 @@ def test_add_expense_get(client_logged_usr1):
     assert '<td><label for="description">Opis (opcjonalne)</label></td>'.encode() in response.data
     assert '<td><textarea id="description" name="description"></textarea></td>'.encode() in response.data
     assert '<td><label for="category">Kategoria</label></td>'.encode() in response.data
-    assert '<td><select id="category" name="category"><option value="test_category1">test_category1</option><option value="test_category2">test_category2</option></select></td>'.encode() in response.data
+    assert '<td><select id="category" name="category" required><option value="test_category1">test_category1</option><option value="test_category2">test_category2</option></select></td>'.encode() in response.data
     assert '<td><label for="amount">Kwota</label></td>'.encode() in response.data
     assert '<td><input id="amount" name="amount" required step="0.01" type="text" value=""></td>'.encode() in response.data
     assert '<td><label for="date">Data</label></td>'.encode() in response.data
     assert '<td><input id="date" name="date" required type="text" value=""></td>'.encode() in response.data
     assert '<td><label for="payer">Płaci</label></td>'.encode() in response.data
-    assert '<td><select id="payer" name="payer"><option value="test_user">test_user</option><option value="second_test_user">second_test_user</option><option value="third_test_user">third_test_user</option><option value="fourth_test_user">fourth_test_user</option><option value="fifth_test_user">fifth_test_user</option></select></td>'.encode() in response.data
+    assert '<td><select id="payer" name="payer" required><option value="test_user">test_user</option><option value="second_test_user">second_test_user</option><option value="third_test_user">third_test_user</option><option value="fourth_test_user">fourth_test_user</option><option value="fifth_test_user">fifth_test_user</option></select></td>'.encode() in response.data
     assert '<td><label for="used_by">Używa</label></td>'.encode() in response.data
     assert '<td><table id="used_by"><tr><th><label for="used_by-0">test_user</label></th><td><input id="used_by-0" name="used_by" type="checkbox" value="test_user"></td></tr><tr><th><label for="used_by-1">second_test_user</label></th><td><input id="used_by-1" name="used_by" type="checkbox" value="second_test_user"></td></tr><tr><th><label for="used_by-2">third_test_user</label></th><td><input id="used_by-2" name="used_by" type="checkbox" value="third_test_user"></td></tr><tr><th><label for="used_by-3">fourth_test_user</label></th><td><input id="used_by-3" name="used_by" type="checkbox" value="fourth_test_user"></td></tr><tr><th><label for="used_by-4">fifth_test_user</label></th><td><input id="used_by-4" name="used_by" type="checkbox" value="fifth_test_user"></td></tr></table></td>'.encode() in response.data
     assert '<td colspan="2" style="text-align: center;"><input id="submit" name="submit" type="submit" value="Wyślij"></td>'.encode() in response.data
@@ -430,3 +430,61 @@ def test_add_expense_post(client_logged_usr1, app_ctx):
     assert new_expense.date == datetime.today().date()
     assert new_expense.amount == '98.7'
     assert new_expense.payer == 4
+
+
+@pytest.mark.add_expense
+def test_add_expense_post_empty(client_logged_usr1):
+    form_data = {'name': '',
+                 'description': '',
+                 'category': '',
+                 'amount': '',
+                 'date': '',
+                 'payer': '',
+                 'used_by': []
+                 }
+    response = client_logged_usr1.post('/budget/1/add_expense', data=form_data)
+    assert response.status_code == 200
+
+    assert 'Pole Nazwa nie może być puste.'.encode() in response.data
+    assert 'Pole Kategoria nie może być puste.'.encode() in response.data
+    assert 'Pole Kwota nie może być puste.'.encode() in response.data
+    assert 'Pole Data nie może być puste.'.encode() in response.data
+    assert 'Pole Płaci nie może być puste.'.encode() in response.data
+    assert 'Przynajmniej jedna opcja musi być zaznaczona'.encode() in response.data
+
+
+@pytest.mark.add_expense
+def test_add_expense_post_wrong_data(client_logged_usr1):
+    form_data = {'name': 'test_wrong_data_expense',
+                 'description': '',
+                 'category': 'nonexisting_category',
+                 'amount': -100.37,
+                 'date': 'asd',
+                 'payer': 'nonexisting_user',
+                 'used_by': ['nonexisting_user']
+                 }
+    response = client_logged_usr1.post('/budget/1/add_expense', data=form_data)
+    response_to_file(response)
+    assert response.status_code == 200
+    assert '<td id="expense_category_error">Not a valid choice</td>'.encode() in response.data
+    assert '<td id="expense_amount_error">Kwota nie może być mniejsza lub równa 0</td>'.encode() in response.data
+    # If DateField type cannot convert input into datetime.date it sets its data field to None. That's why it shows empty field error
+    assert 'Pole Data nie może być puste.'.encode() in response.data
+    assert '<td id="expense_payer_error">Not a valid choice</td>'.encode() in response.data
+    assert '<td id="expense_used_by_error">&#39;nonexisting_user&#39; is not a valid choice for this field</td>'.encode() in response.data
+
+
+@pytest.mark.add_expense
+def test_add_expense_post_future_date(client_logged_usr1):
+    form_data = {'name': 'test_post_expense',
+                 'description': '',
+                 'category': 'test_category1',
+                 'amount': 10,
+                 'date': (datetime.today() + timedelta(days=1)).date(),
+                 'payer': 'fifth_test_user',
+                 'used_by': ['fifth_test_user']
+                 }
+    response = client_logged_usr1.post('/budget/1/add_expense', data=form_data)
+    # response_to_file(response)
+    assert response.status_code == 200
+    assert 'Nie można użyć przyszłej daty'.encode() in response.data

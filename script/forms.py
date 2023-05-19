@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, BooleanField, SelectField, DateField, DecimalField, SelectMultipleField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, StopValidation
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, StopValidation, NumberRange
 from wtforms.widgets import TableWidget, CheckboxInput
 try:
     from wtforms.widgets import ColorInput
@@ -66,10 +66,10 @@ class CategoryForm(FlaskForm):
 class ExpenseForm(FlaskForm):
     name = StringField('Nazwa', validators=[DataRequired("Pole Nazwa nie może być puste.")])
     description = TextAreaField('Opis (opcjonalne)')
-    category = SelectField('Kategoria', choices=[])
+    category = SelectField('Kategoria', choices=[], validators=[DataRequired("Pole Kategoria nie może być puste.")])
     date = DateField('Data', format='%Y-%m-%d', validators=[DataRequired("Pole Data nie może być puste.")])
-    amount = DecimalField('Kwota', places=2, validators=[DataRequired("Pole Kwota nie może być puste.")])
-    payer = SelectField('Płaci', choices=[])
+    amount = DecimalField('Kwota', places=2, validators=[DataRequired("Pole Kwota nie może być puste."), NumberRange(min=0.01, message="Kwota nie może być mniejsza lub równa 0")])
+    payer = SelectField('Płaci', choices=[], validators=[DataRequired("Pole Płaci nie może być puste.")])
     used_by = MultiCheckboxField('Używa', choices=[], validators=[MultiCheckboxAtLeastOne("Przynajmniej jedna opcja musi być zaznaczona")])
     submit = SubmitField('Wyślij')
 
