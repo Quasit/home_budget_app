@@ -78,10 +78,14 @@ class Expense(db.Model):
 
     def __repr__(self):
         #return f'<id: {self.id} name: {self.name}, category_id: {self.category_id}, amount: {self.amount}, date: {self.date}>'
-        return f'<id: {self.id}, date: {self.date}>'
+        return f'<id: {self.id}>'
 
 
 class UsedBy(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     expense_id = db.Column(db.Integer, db.ForeignKey('expense.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __repr__(self):
+        #return f'<id: {self.id} name: {self.name}, category_id: {self.category_id}, amount: {self.amount}, date: {self.date}>'
+        return f'<id: {self.id}, expense_id: {self.expense_id}, user_id: {self.user_id}>'

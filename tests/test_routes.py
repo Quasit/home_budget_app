@@ -1,7 +1,8 @@
-from script.models import User, Budget, AllowedUsers, Expense
+from script.models import User, Budget, AllowedUsers, Expense, UsedBy
 from script.functions import get_expenses
 import pytest
 from datetime import datetime, timedelta
+import re
 
 def response_to_file(response):
     with open("tests/response_data.txt", "w") as response_file:
@@ -17,13 +18,13 @@ def response_to_file(response):
 # '/budget/add_budget' - DONE
 # '/budget/<int:budget_id>' - DONE
 # '/budget/<int:budget_id>/expenses' - DONE
-# '/budget/<int:budget_id>/add_expense'
-# '/budget/<int:budget_id>/edit_expense/<int:expense_id>'
-# '/budget/<int:budget_id>/remove_expense/<int:expense_id>'
+# '/budget/<int:budget_id>/add_expense' - DONE
+# '/budget/<int:budget_id>/edit_expense/<int:expense_id>' - DONE
+# '/budget/<int:budget_id>/remove_expense/<int:expense_id>' - DONE
+# '/budget/<int:budget_id>/settings'
 # '/budget/<int:budget_id>/add_category'
 # '/budget/<int:budget_id>/edit_category/<int:category_id>'
 # '/budget/<int:budget_id>/remove_category/<int:category_id>'
-# '/budget/<int:budget_id>/settings'
 
 # ----------------------------
 # '/' index TESTS
@@ -423,6 +424,7 @@ def test_add_expense_post(client_logged_usr1, app_ctx):
     assert response.status_code == 302
 
     new_expense = Expense.query.filter_by(name='test_post_expense').first()
+    assert new_expense.id == 8
     assert new_expense.name == 'test_post_expense'
     assert new_expense.description == 'test post expense description'
     assert new_expense.budget_id == 1
@@ -430,6 +432,9 @@ def test_add_expense_post(client_logged_usr1, app_ctx):
     assert new_expense.date == datetime.today().date()
     assert new_expense.amount == '98.7'
     assert new_expense.payer == 4
+    
+    new_used_by_list = UsedBy.query.filter_by(expense_id=new_expense.id).all()
+    assert len(new_used_by_list) == 3
 
 
 @pytest.mark.add_expense
@@ -464,7 +469,6 @@ def test_add_expense_post_wrong_data(client_logged_usr1):
                  'used_by': ['nonexisting_user']
                  }
     response = client_logged_usr1.post('/budget/1/add_expense', data=form_data)
-    response_to_file(response)
     assert response.status_code == 200
     assert '<td id="expense_category_error">Not a valid choice</td>'.encode() in response.data
     assert '<td id="expense_amount_error">Kwota nie może być mniejsza lub równa 0</td>'.encode() in response.data
@@ -485,6 +489,195 @@ def test_add_expense_post_future_date(client_logged_usr1):
                  'used_by': ['fifth_test_user']
                  }
     response = client_logged_usr1.post('/budget/1/add_expense', data=form_data)
-    # response_to_file(response)
     assert response.status_code == 200
     assert 'Nie można użyć przyszłej daty'.encode() in response.data
+
+
+# ----------------------------
+# '/budget/<int:budget_id>/edit_expense/<int:expense_id>' TESTS
+# ----------------------------
+
+@pytest.mark.edit_expense
+def test_edit_expense_get(client_logged_usr1):
+    response = client_logged_usr1.get('/budget/1/edit_expense/3')
+
+    assert '<div class="go_back_form"><a class="go_back_a" href="/budget/1/expenses">< Wstecz</a></div>'.encode() in response.data
+    
+    assert '<td><label for="name">Nazwa</label></td>'.encode() in response.data
+    assert '<td><input id="name" name="name" required type="text" value="test_expense3"></td>'.encode() in response.data
+    assert '<td><label for="description">Opis (opcjonalne)</label></td>'.encode() in response.data
+    assert '<td><textarea id="description" name="description">test_expense_3_description</textarea></td>'.encode() in response.data
+    assert '<td><label for="category">Kategoria</label></td>'.encode() in response.data
+    assert '<td><select id="category" name="category" required><option value="test_category1">test_category1</option><option selected value="test_category2">test_category2</option></select></td>'.encode() in response.data
+    assert '<td><label for="amount">Kwota</label></td>'.encode() in response.data
+    assert '<td><input id="amount" name="amount" required step="0.01" type="text" value="30.00"></td>'.encode() in response.data
+    assert '<td><label for="date">Data</label></td>'.encode() in response.data
+    assert '<td><input id="date" name="date" required type="text" value="2022-06-30"></td>'.encode() in response.data
+    assert '<td><label for="payer">Płaci</label></td>'.encode() in response.data
+    assert '<td><select id="payer" name="payer" required><option selected value="test_user">test_user</option><option value="second_test_user">second_test_user</option><option value="third_test_user">third_test_user</option><option value="fourth_test_user">fourth_test_user</option><option value="fifth_test_user">fifth_test_user</option></select></td>'.encode() in response.data
+    assert '<td><label for="used_by">Używa</label></td>'.encode() in response.data
+    assert '<td><table id="used_by"><tr><th><label for="used_by-0">test_user</label></th><td><input checked id="used_by-0" name="used_by" type="checkbox" value="test_user"></td></tr><tr><th><label for="used_by-1">second_test_user</label></th><td><input id="used_by-1" name="used_by" type="checkbox" value="second_test_user"></td></tr><tr><th><label for="used_by-2">third_test_user</label></th><td><input id="used_by-2" name="used_by" type="checkbox" value="third_test_user"></td></tr><tr><th><label for="used_by-3">fourth_test_user</label></th><td><input id="used_by-3" name="used_by" type="checkbox" value="fourth_test_user"></td></tr><tr><th><label for="used_by-4">fifth_test_user</label></th><td><input id="used_by-4" name="used_by" type="checkbox" value="fifth_test_user"></td></tr></table></td>'.encode() in response.data
+    assert '<td colspan="2" style="text-align: center;"><input id="submit" name="submit" type="submit" value="Zapisz"></td>'.encode() in response.data
+
+
+@pytest.mark.edit_expense
+def test_edit_expense_post(client_logged_usr1, app_ctx):
+    form_data = {'name': 'test_post_edit_expense_3',
+                 'description': 'test post edit expense 3 description',
+                 'category': 'test_category2',
+                 'amount': 35.00,
+                 'date': datetime.today().date(),
+                 'payer': 'third_test_user',
+                 'used_by': ['third_test_user', 'fifth_test_user']
+                 }
+    response = client_logged_usr1.post('/budget/1/edit_expense/3', data=form_data)
+    assert response.status_code == 302
+
+    edited_expense = Expense.query.filter_by(name='test_post_edit_expense_3').first()
+    assert edited_expense.id == 3
+    assert edited_expense.name == 'test_post_edit_expense_3'
+    assert edited_expense.description == 'test post edit expense 3 description'
+    assert edited_expense.budget_id == 1
+    assert edited_expense.category_id == 2
+    assert edited_expense.date == datetime.today().date()
+    assert edited_expense.amount == '35.0'
+    assert edited_expense.payer == 3
+
+    new_used_by_list = UsedBy.query.filter_by(expense_id=edited_expense.id).all()
+    assert len(new_used_by_list) == 2
+    assert new_used_by_list[0].user_id == 3
+    assert new_used_by_list[1].user_id == 5
+    
+
+@pytest.mark.edit_expense
+def test_edit_expense_post_empty(client_logged_usr1):
+    form_data = {'name': '',
+                 'description': '',
+                 'category': '',
+                 'amount': '',
+                 'date': '',
+                 'payer': '',
+                 'used_by': []
+                 }
+    response = client_logged_usr1.post('/budget/1/edit_expense/3', data=form_data)
+    assert response.status_code == 200
+
+    assert 'Pole Nazwa nie może być puste.'.encode() in response.data
+    assert 'Pole Kategoria nie może być puste.'.encode() in response.data
+    assert 'Pole Kwota nie może być puste.'.encode() in response.data
+    assert 'Pole Data nie może być puste.'.encode() in response.data
+    assert 'Pole Płaci nie może być puste.'.encode() in response.data
+    assert 'Przynajmniej jedna opcja musi być zaznaczona'.encode() in response.data
+
+
+@pytest.mark.edit_expense
+def test_edit_expense_post_wrong_data(client_logged_usr1):
+    form_data = {'name': 'test_wrong_data_expense',
+                 'description': '',
+                 'category': 'nonexisting_category',
+                 'amount': -100.37,
+                 'date': 'asd',
+                 'payer': 'nonexisting_user',
+                 'used_by': ['nonexisting_user']
+                 }
+    response = client_logged_usr1.post('/budget/1/edit_expense/3', data=form_data)
+    assert response.status_code == 200
+
+    assert '<td id="expense_category_error">Not a valid choice</td>'.encode() in response.data
+    assert '<td id="expense_amount_error">Kwota nie może być mniejsza lub równa 0</td>'.encode() in response.data
+    # If DateField type cannot convert input into datetime.date it sets its data field to None. That's why it shows empty field error
+    assert 'Pole Data nie może być puste.'.encode() in response.data
+    assert '<td id="expense_payer_error">Not a valid choice</td>'.encode() in response.data
+    assert '<td id="expense_used_by_error">&#39;nonexisting_user&#39; is not a valid choice for this field</td>'.encode() in response.data
+
+
+@pytest.mark.edit_expense
+def test_edit_expense_post_future_date(client_logged_usr1):
+    form_data = {'name': 'test_post_expense',
+                 'description': '',
+                 'category': 'test_category1',
+                 'amount': 10,
+                 'date': (datetime.today() + timedelta(days=1)).date(),
+                 'payer': 'fifth_test_user',
+                 'used_by': ['fifth_test_user']
+                 }
+    response = client_logged_usr1.post('/budget/1/edit_expense/3', data=form_data)
+    assert response.status_code == 200
+
+    assert 'Nie można użyć przyszłej daty'.encode() in response.data
+
+
+# ----------------------------
+# '/budget/<int:budget_id>/remove_expense/<int:expense_id>' TESTS
+# ----------------------------
+
+@pytest.mark.remove_expense
+def test_remove_expense_get(client_logged_usr1, app_ctx):
+    expense = Expense.query.get(6)
+    assert expense is not None
+
+    response = client_logged_usr1.get('/budget/1/remove_expense/6')
+    assert response.status_code == 302
+
+    expense = Expense.query.get(6)
+    assert expense is None
+
+    response = client_logged_usr1.get('/budget/1/remove_expense/6')
+    assert response.status_code == 302
+
+    response = client_logged_usr1.get('/budget/1/remove_expense/6', follow_redirects = True)
+    assert response.status_code == 200
+    assert response.request.path == "/budget/1/expenses"
+
+
+# ----------------------------
+# '/budget/<int:budget_id>/settings' TESTS
+# ----------------------------
+
+@pytest.mark.budget_settings
+def test_budget_setting_get_budget_menu(client_logged_usr1):
+    response = client_logged_usr1.get('/budget/1/settings')
+    assert '<div class="budget-menu-form"><a class="budget-menu-a" href="/budget/1/settings">&#128736 Ustawienia</a></div>'.encode() in response.data
+    assert '<div class="budget-menu-form"><a class="budget-menu-a" href="/budget/1/expenses">&#128197 Wydatki</a></div>'.encode() in response.data
+    assert '<div class="budget-menu-form"><a class="budget-menu-a" href="/budget/1">&#128202 Podsumowanie</a></div>'.encode() in response.data
+
+
+@pytest.mark.budget_settings
+def test_budget_settings_get(client_logged_usr1):
+    response = client_logged_usr1.get('/budget/1/settings')
+    assert response.status_code == 200
+
+    assert '<a class="add_expense_a" href="/budget/1/add_category">Dodaj kategorię</a>'.encode() in response.data
+
+    assert '<td id="settings_category_color"><div style="background: #ffffff; min-height:20px; min-width:20px; margin:2px"></div></td>'.encode() in response.data
+    assert '<td id="settings_category_name">test_category1</td>'.encode() in response.data
+    assert '<td id="settings_category_description">test_category_1_description</td>'.encode() in response.data
+    assert '''<form action="/budget/1/remove_category/1" onsubmit="return confirm('UWAGA! Wraz z usunięciem katetorii, usunięte zostaną wszystkie wpisy, do których przypisana została ta kategoria!\\nCzy na pewno chcesz usunąć tę kategorię?\\ntest_category1')"><button title="Usuń kategorię" class="remove_expense_btn" type="submit"><b>X</b></button></form>'''.encode() in response.data
+    assert '<form><button title="Edytuj kategorię" class="remove_expense_btn" type="submit" formaction="/budget/1/edit_category/1"><b>&#9998</b></button></form>'.encode() in response.data
+
+    assert '<td id="settings_category_color"><div style="background: #000000; min-height:20px; min-width:20px; margin:2px"></div></td>'.encode() in response.data
+    assert '<td id="settings_category_name">test_category2</td>'.encode() in response.data
+    assert '<td id="settings_category_description">test_category_2_description</td>'.encode() in response.data
+    assert '''<form action="/budget/1/remove_category/2" onsubmit="return confirm('UWAGA! Wraz z usunięciem katetorii, usunięte zostaną wszystkie wpisy, do których przypisana została ta kategoria!\\nCzy na pewno chcesz usunąć tę kategorię?\\ntest_category2')"><button title="Usuń kategorię" class="remove_expense_btn" type="submit"><b>X</b></button></form>'''.encode() in response.data
+    assert '<form><button title="Edytuj kategorię" class="remove_expense_btn" type="submit" formaction="/budget/1/edit_category/2"><b>&#9998</b></button></form>'.encode() in response.data
+
+# ----------------------------
+# '/budget/<int:budget_id>/add_category' TESTS
+# ----------------------------
+
+@pytest.mark.add_category
+def test_add_category_get(client_logged_usr1):
+    response = client_logged_usr1.get('/budget/1/add_category')
+    assert '<div class="go_back_form"><a class="go_back_a" href="/budget/1/settings">< Wstecz</a></div>'.encode() in response.data
+
+    assert '<td><label for="name">Nazwa kategorii</label></td>'.encode() in response.data
+    assert '<td><input id="name" name="name" required type="text" value=""></td>'.encode() in response.data
+    assert '<td><label for="description">Opis (opcjonalne)</label></td>'.encode() in response.data
+    assert '<td><textarea id="description" name="description"></textarea></td>'.encode() in response.data
+    assert '<td><label for="category_color">Kolor kategorii</label></td>'.encode() in response.data
+
+    regex = re.escape('<td><input id="category_color" name="category_color" type="color" value="') + r"#(?:[0-9a-fA-F]{3}){1,2}" + re.escape('"></td>')
+    assert re.search(regex, response.data.decode())
+
+    assert '<td colspan="2" style="text-align: center;"><input id="submit" name="submit" type="submit" value="Wyślij"></td>'.encode() in response.data
+

@@ -185,7 +185,7 @@ def edit_expense(budget_id: int, expense_id: int):
         # Then need to delete sql records which should be removed and update list
         for record in database_used_by_user_id:
             if record not in form_used_by_user_id:
-                record_to_remove = UsedBy.query.filter_by(user_id=record).first()
+                record_to_remove = UsedBy.query.filter_by(expense_id=expense_id, user_id=record).first()
                 db.session.delete(record_to_remove)
                 database_used_by_user_id.remove(record)
         # Then we need to update our
@@ -214,11 +214,12 @@ def edit_expense(budget_id: int, expense_id: int):
 @login_required
 def remove_expense(budget_id: int, expense_id: int):
     expense_to_remove = Expense.query.filter_by(id=expense_id).first()
-    used_by_records = UsedBy.query.filter_by(expense_id=expense_to_remove.id).all()
-    db.session.delete(expense_to_remove)
-    for record in used_by_records:
-        db.session.delete(record)
-    db.session.commit()
+    if expense_to_remove is not None:
+        used_by_records = UsedBy.query.filter_by(expense_id=expense_to_remove.id).all()
+        db.session.delete(expense_to_remove)
+        for record in used_by_records:
+            db.session.delete(record)
+        db.session.commit()
     return redirect(url_for('expenses', budget_id=budget_id))
 
 
