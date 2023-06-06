@@ -138,7 +138,7 @@ Below are listed features that I have already implemented in the project
 - [x] Pagination in Expenses and Income table page
 - [ ] Filters in Expenses and Income table page
 - [x] Summary view for basic periods (current month / current year / one year period)
-- [ ] Summary view for user selected dates
+- [ ] Summary view for dates selected by user
 - [x] Basic chart in budget summary page
 - [ ] Page with additional charts
 - [x] Color picker for Expenses Categories
@@ -146,7 +146,7 @@ Below are listed features that I have already implemented in the project
 - [x] Pytest fixtures and test database prep
 - [x] Unit tests for app and database setup
 - [x] Unit tests for functions
-- [ ] Unit tests for routes
+- [x] Unit tests for routes
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
