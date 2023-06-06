@@ -19,6 +19,8 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "remove_expense: /budget/<int:budget_id>/remove_expense/<int:expense_id> route tests")
     config.addinivalue_line("markers", "budget_settings: /budget/<int:budget_id>/settings route tests")
     config.addinivalue_line("markers", "add_category: /budget/<int:budget_id>/add_category route tests")
+    config.addinivalue_line("markers", "edit_category: /budget/<int:budget_id>/edit_category/<int:category_id> route tests")
+    config.addinivalue_line("markers", "remove_category: /budget/<int:budget_id>/remove_category/<int:category_id> route tests")
 
 
 @pytest.fixture

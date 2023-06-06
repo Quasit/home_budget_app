@@ -9,6 +9,7 @@ except ImportError:
     from wtforms.widgets import html5
     ColorInput = html5.ColorInput
 from datetime import date
+import re
 
 from script.models import User, Category, AllowedUsers
 
@@ -58,10 +59,15 @@ class BudgetForm(FlaskForm):
     submit = SubmitField('Wyślij')
 
 class CategoryForm(FlaskForm):
-    name = StringField('Nazwa kategorii', validators=[DataRequired()])
+    name = StringField('Nazwa kategorii', validators=[DataRequired("Pole Nazwa nie może być puste.")])
     description = TextAreaField('Opis (opcjonalne)')
-    category_color = StringField('Kolor kategorii', widget=ColorInput())
+    category_color = StringField('Kolor kategorii', widget=ColorInput(), validators=[DataRequired("Pole Kolor kategorii nie może być puste.")])
     submit = SubmitField('Wyślij')
+
+    def validate_category_color(form, field):
+        regex = r"#(?:[0-9a-fA-F]{1,2}){3}"
+        if not re.search(regex, field.data):
+            raise ValidationError("Kolor musi być podany w formacie HEX")
 
 class ExpenseForm(FlaskForm):
     name = StringField('Nazwa', validators=[DataRequired("Pole Nazwa nie może być puste.")])

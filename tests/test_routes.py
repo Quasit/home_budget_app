@@ -1,4 +1,4 @@
-from script.models import User, Budget, AllowedUsers, Expense, UsedBy
+from script.models import User, Budget, AllowedUsers, Expense, UsedBy, Category
 from script.functions import get_expenses
 import pytest
 from datetime import datetime, timedelta
@@ -21,10 +21,10 @@ def response_to_file(response):
 # '/budget/<int:budget_id>/add_expense' - DONE
 # '/budget/<int:budget_id>/edit_expense/<int:expense_id>' - DONE
 # '/budget/<int:budget_id>/remove_expense/<int:expense_id>' - DONE
-# '/budget/<int:budget_id>/settings'
-# '/budget/<int:budget_id>/add_category'
-# '/budget/<int:budget_id>/edit_category/<int:category_id>'
-# '/budget/<int:budget_id>/remove_category/<int:category_id>'
+# '/budget/<int:budget_id>/settings' - DONE
+# '/budget/<int:budget_id>/add_category' - DONE
+# '/budget/<int:budget_id>/edit_category/<int:category_id>' - DONE
+# '/budget/<int:budget_id>/remove_category/<int:category_id>' - DONE
 
 # ----------------------------
 # '/' index TESTS
@@ -669,15 +669,155 @@ def test_budget_settings_get(client_logged_usr1):
 def test_add_category_get(client_logged_usr1):
     response = client_logged_usr1.get('/budget/1/add_category')
     assert '<div class="go_back_form"><a class="go_back_a" href="/budget/1/settings">< Wstecz</a></div>'.encode() in response.data
-
+    
     assert '<td><label for="name">Nazwa kategorii</label></td>'.encode() in response.data
     assert '<td><input id="name" name="name" required type="text" value=""></td>'.encode() in response.data
     assert '<td><label for="description">Opis (opcjonalne)</label></td>'.encode() in response.data
     assert '<td><textarea id="description" name="description"></textarea></td>'.encode() in response.data
     assert '<td><label for="category_color">Kolor kategorii</label></td>'.encode() in response.data
-
-    regex = re.escape('<td><input id="category_color" name="category_color" type="color" value="') + r"#(?:[0-9a-fA-F]{3}){1,2}" + re.escape('"></td>')
+    
+    # Color field is filled by default with random generated Hex color value, that's why it needs regex for correct assertion
+    regex = re.escape('<td><input id="category_color" name="category_color" required type="color" value="') + r"#(?:[0-9a-fA-F]{1,2}){3}" + re.escape('"></td>')
     assert re.search(regex, response.data.decode())
 
     assert '<td colspan="2" style="text-align: center;"><input id="submit" name="submit" type="submit" value="Wyślij"></td>'.encode() in response.data
 
+
+@pytest.mark.add_category
+def test_add_category_post(client_logged_usr1, app_ctx):
+    form_data = {'name': 'test_post_category',
+                'description': 'test post category description',
+                'category_color': '#aaaaaa'
+                }
+    response = client_logged_usr1.post('/budget/1/add_category', data=form_data)
+    assert response.status_code == 302
+
+    new_category = Category.query.filter_by(name='test_post_category').first()
+    assert new_category.id == 3
+    assert new_category.name == 'test_post_category'
+    assert new_category.description == 'test post category description'
+    assert new_category.color == '#aaaaaa'
+
+
+@pytest.mark.add_category
+def test_add_category_post_empty(client_logged_usr1):
+    form_data = {'name': '',
+                'description': '',
+                'category_color': ''
+                }
+    response = client_logged_usr1.post('/budget/1/add_category', data=form_data)
+    assert response.status_code == 200
+
+    assert 'Pole Nazwa nie może być puste.'.encode() in response.data
+    assert 'Pole Kolor kategorii nie może być puste.'.encode() in response.data
+
+
+@pytest.mark.add_category
+def test_add_category_post_wrong_data(client_logged_usr1):
+    form_data = {'name': 'test_post_category_wrong_data',
+                'description': '',
+                'category_color': '#23'
+                }
+    response = client_logged_usr1.post('/budget/1/add_category', data=form_data)
+    assert response.status_code == 200
+
+    assert '<td id="category_color_error">Kolor musi być podany w formacie HEX</td>'.encode() in response.data
+
+
+# ----------------------------
+# '/budget/<int:budget_id>/edit_category/<int:category_id>' TESTS
+# ----------------------------
+
+@pytest.mark.edit_category
+def test_edit_category_get(client_logged_usr1):
+    response = client_logged_usr1.get('/budget/1/edit_category/1')
+    # response_to_file(response)
+    assert '<div class="go_back_form"><a class="go_back_a" href="/budget/1/settings">< Wstecz</a></div>'.encode() in response.data
+
+    assert '<td><label for="name">Nazwa kategorii</label></td>'.encode() in response.data
+    assert '<td><input id="name" name="name" required type="text" value="test_category1"></td>'.encode() in response.data
+    assert '<td><label for="description">Opis (opcjonalne)</label></td>'.encode() in response.data
+    assert '<td><textarea id="description" name="description">test_category_1_description</textarea></td>'.encode() in response.data
+    assert '<td><label for="category_color">Kolor kategorii</label></td>'.encode() in response.data
+    assert '<td><input id="category_color" name="category_color" required type="color" value="#ffffff"></td>'.encode() in response.data
+    assert '<td colspan="2" style="text-align: center;"><input id="submit" name="submit" type="submit" value="Zapisz"></td>'.encode() in response.data
+
+
+@pytest.mark.edit_category
+def test_edit_category_post(client_logged_usr1, app_ctx):
+    form_data = {'name': 'test_edit_category_1',
+                 'description': 'test edit category 1 description',
+                 'category_color': '#aaaaaa'
+                 }
+    response = client_logged_usr1.post('/budget/1/edit_category/1', data=form_data)
+    assert response.status_code == 302
+
+    edited_category = Category.query.get(1)
+    assert edited_category.id == 1
+    assert edited_category.name == 'test_edit_category_1'
+    assert edited_category.description == 'test edit category 1 description'
+    assert edited_category.color == '#aaaaaa'
+
+
+@pytest.mark.edit_category
+def test_edit_category_post_empty(client_logged_usr1):
+    form_data = {'name': '',
+                 'description': '',
+                 'category_color': ''
+                 }
+    response = client_logged_usr1.post('/budget/1/edit_category/1', data=form_data)
+    assert response.status_code == 200
+
+    assert 'Pole Nazwa nie może być puste.'.encode() in response.data
+    assert 'Pole Kolor kategorii nie może być puste.'.encode() in response.data
+
+
+@pytest.mark.edit_category
+def test_edit_category_post_wrong_data(client_logged_usr1):
+    form_data = {'name': 'test_edit_category_1',
+                 'description': '',
+                 'category_color': '#23'
+                 }
+    response = client_logged_usr1.post('/budget/1/edit_category/1', data=form_data)
+    assert response.status_code == 200
+
+    assert '<td id="category_color_error">Kolor musi być podany w formacie HEX</td>'.encode() in response.data
+
+
+# ----------------------------
+# '/budget/<int:budget_id>/remove_category/<int:category_id>' TESTS
+# ----------------------------
+
+@pytest.mark.remove_category
+def test_remove_category_get(client_logged_usr1, app_ctx):
+    all_expenses = len(Expense.query.all())
+    expenses_cat2 = len(Expense.query.filter_by(category_id=2).all())
+
+    all_used_by = len(UsedBy.query.all())
+    used_by_cat_2 = len(UsedBy.query.filter(UsedBy.expense_id == Expense.id, Expense.category_id == 2).join(Expense).all())
+
+    assert all_expenses == 7
+    assert expenses_cat2 == 3
+    assert all_used_by == 12
+    assert used_by_cat_2 == 7
+
+
+    response = client_logged_usr1.get('/budget/1/remove_category/2')
+
+    all_expenses = len(Expense.query.all())
+    expenses_cat2 = len(Expense.query.filter_by(category_id=2).all())
+    all_used_by = len(UsedBy.query.all())
+    used_by_cat_2 = len(UsedBy.query.filter(UsedBy.expense_id == Expense.id, Expense.category_id == 2).join(Expense).all())
+
+    assert response.status_code == 302
+
+    assert all_expenses == 4
+    assert expenses_cat2 == 0
+    assert all_used_by == 5
+    assert used_by_cat_2 == 0
+
+
+    response = client_logged_usr1.get('/budget/1/remove_category/2', follow_redirects=True)
+
+    assert response.status_code == 200
+    assert response.request.path == "/budget/1/settings"

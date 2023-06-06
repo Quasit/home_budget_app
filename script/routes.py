@@ -233,7 +233,8 @@ def add_category(budget_id: int):
         db.session.add(category)
         db.session.commit()
         return redirect(url_for('budget_settings', budget_id=budget_id))
-    form.category_color.data = random_color()
+    if not form.category_color.data:
+        form.category_color.data = random_color()
     return render_template('add_category.html', budget_id=budget_id, form=form)
 
 
@@ -260,8 +261,15 @@ def edit_category(budget_id: int, category_id: int):
 @general.route('/budget/<int:budget_id>/remove_category/<int:category_id>')
 @login_required
 def remove_category(budget_id: int, category_id: int):
+    expenses_to_remove = Expense.query.filter_by(category_id=category_id).all()
+    if expenses_to_remove is not None:
+        for expense in expenses_to_remove:
+            UsedBy.query.filter_by(expense_id=expense.id).delete()
+            db.session.delete(expense)
+
     category_to_remove = Category.query.filter_by(id=category_id).first()
-    db.session.delete(category_to_remove)
+    if category_to_remove is not None:
+        db.session.delete(category_to_remove)
     db.session.commit()
     return redirect(url_for('budget_settings', budget_id=budget_id))
 
