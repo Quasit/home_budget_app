@@ -28,7 +28,8 @@ def app():
     
     app = create_app({
         'TESTING': True,
-        'WTF_CSRF_ENABLED' : False
+        'WTF_CSRF_ENABLED' : False,
+        'SECRET_KEY': 'test',
     })
 
     with app.app_context():

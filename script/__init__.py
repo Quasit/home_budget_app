@@ -9,19 +9,30 @@ def create_app(test_config=None):
         'TESTING' : False,
         'SQLALCHEMY_DATABASE_URI' : 'sqlite:///:memory:',
         'SQLALCHEMY_TRACK_MODIFICATIONS' : False,
-        'SECRET_KEY' : 'dev',
+        
     })
-
     
     if test_config is None:
-        # load the instance of development config, when not testing
-        try:
-            from script.config import DevelopmentConfig
-            app.config.from_object(DevelopmentConfig())
-        except ModuleNotFoundError:
-            pass
+        # if run on docker load environment config variables
+        if os.environ.get('ENVIROMENT') == 'docker':
+            app.config.from_prefixed_env()
+            # check if all data needed to set up postgres connection is not empty
+            if os.environ.get('POSTGRES_USER') and os.environ.get('POSTGRES_PASSWORD') and os.environ.get('POSTGRES_HOST'):
+                app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@{}:5432/home_budget'.format(
+                    os.environ.get('POSTGRES_USER'), os.environ.get(
+                        'POSTGRES_PASSWORD'),
+                    os.environ.get('POSTGRES_HOST'))
+            else:
+                raise RuntimeError("The environment variables for  is not set")
+            
+        else:  # if no environment variables then load local config.py file
+            try:
+                from script.config import DevelopmentConfig
+                app.config.from_object(DevelopmentConfig())       
+            except ModuleNotFoundError:
+                pass
     else:
-        # load the default test config and then load passed in test config
+        # load test config
         app.config.from_mapping(test_config)
     
     from script.models import db, create_tables_if_not_exist
@@ -30,9 +41,5 @@ def create_app(test_config=None):
 
     from script.routes import login_manager
     login_manager.init_app(app)
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
 
     return app

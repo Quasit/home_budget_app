@@ -731,7 +731,6 @@ def test_add_category_post_wrong_data(client_logged_usr1):
 @pytest.mark.edit_category
 def test_edit_category_get(client_logged_usr1):
     response = client_logged_usr1.get('/budget/1/edit_category/1')
-    # response_to_file(response)
     assert '<div class="go_back_form"><a class="go_back_a" href="/budget/1/settings">< Wstecz</a></div>'.encode() in response.data
 
     assert '<td><label for="name">Nazwa kategorii</label></td>'.encode() in response.data

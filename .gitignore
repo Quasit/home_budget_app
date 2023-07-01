@@ -2,7 +2,8 @@
 .vscode
 add_db_data.py
 templates/testing.html
-budget_database.db
+/data
+/data/budget_database.db
 temp.txt
 *__pycache__
 script/config.py
@@ -12,3 +13,4 @@ tests/response_data.txt
 /htmlcov
 .coverage
 *.egg-info/
+/temp

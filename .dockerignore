@@ -1,0 +1,10 @@
+*
+
+!script/*
+!static/*
+!templates/*
+!data/init_db.sql
+!tests/*
+!requirements.txt
+!start.sh
+/script/config.py

@@ -134,6 +134,11 @@ hr {
 
  .navbar-btn-form-login {
     float: right;
+    background-color: #16302B; 
+    color:#FFFFFF;
+    font-weight: bold;
+    border: none;
+    height: 70px;
  }
 
 .navbar-btn, .navbar-btn-login {
@@ -143,6 +148,13 @@ hr {
     border: none;
     height: 100%;
     padding: 0px 20px;
+}
+
+.navbar-btn-login {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .navbar-btn-form a, .navbar-btn-login a {
@@ -947,7 +959,7 @@ input:-webkit-autofill:active {
  /* Style the tab */
  .tab {
     overflow: hidden;
-    background-color: #f1f1f1;
+    background-color: #FFFFFF;
     margin: auto;
     width: 100%;
     display: flex;

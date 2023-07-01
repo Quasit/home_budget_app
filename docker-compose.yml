@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - ./data/postgres-db:/var/lib/postgresql/data
+      - ./data/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    env_file:
+      - docker.env
+
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    #volumes:
+    #  - .:/usr/src/app
+    ports:
+      - "5000:5000"
+    env_file:
+      - docker.env
+    depends_on:
+      - db
+    image: quasit/home_budget
