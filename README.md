@@ -25,6 +25,12 @@
     </li>
     <li>
       <a href="#installation">Installation</a>
+      <ul>
+        <li><a href="#locally">Locally</a></li>
+      </ul>
+      <ul>
+        <li><a href="#docker">Docker</a></li>
+      </ul>
     </li>
     <li><a href="#features">Features</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
@@ -64,6 +70,7 @@ Below are major frameworks/libraries that I used to build that project
 * SQLite
 * Javascript
 * Pytest
+* Docker
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -73,6 +80,7 @@ Below are major frameworks/libraries that I used to build that project
 <!-- Installation -->
 ## Installation
 
+### Locally
 To run application locally follow below steps
 
 1. Clone the repo
@@ -93,14 +101,30 @@ To run application locally follow below steps
         TESTING = False
         SQLALCHEMY_TRACK_MODIFICATIONS = False
         SECRET_KEY = 'ENTER YOUR SECRET KEY'
-        SQLALCHEMY_DATABASE_URI = 'sqlite:///../budget_database.db'
+        SQLALCHEMY_DATABASE_URI = 'sqlite:///../data/budget_database.db'
    ```
-5. Run app in development mode:
+5. Run app in using app_run.py file:
    ```sh
-   $env:FLASK_ENV="development"; python3 app_run.py
+   python3 app_run.py
    ```
 6. App is available in your browser at <a href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a>
 
+### Docker
+To run application using docker containers follow below steps
+1. Clone the repo
+   ```sh
+   git clone https://github.com/Quasit/home_budget_app.git
+   ```
+2. Compose docker containers
+    ```docker
+    docker compose up -d
+    ```
+3. App is available in your browser at <a href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a>
+   
+4. When you will want to stop application use docker compose down
+    ```docker
+    docker compose down
+    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -147,6 +171,8 @@ Below are listed features that I have already implemented in the project
 - [x] Unit tests for app and database setup
 - [x] Unit tests for functions
 - [x] Unit tests for routes
+- [x] Dockerfile setup
+- [x] docker-compose setup
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

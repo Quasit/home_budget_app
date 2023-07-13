@@ -11,17 +11,24 @@ services:
       - ./data/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
     env_file:
       - docker.env
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 2s
+      retries: 5
+
 
   app:
     build:
       context: .
       dockerfile: ./Dockerfile
-    #volumes:
-    #  - .:/usr/src/app
+    volumes:
+      - .:/usr/src/app
     ports:
       - "5000:5000"
     env_file:
       - docker.env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     image: quasit/home_budget
