@@ -1,0 +1,1 @@
+CREATE DATABASE home_budget WITH OWNER postgres;

@@ -2,7 +2,7 @@
 .vscode
 add_db_data.py
 templates/testing.html
-/data
+/data/postgres-db
 /data/budget_database.db
 temp.txt
 *__pycache__
