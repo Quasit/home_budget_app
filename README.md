@@ -80,6 +80,23 @@ Below are major frameworks/libraries that I used to build that project
 <!-- Installation -->
 ## Installation
 
+### Docker
+To run application using docker containers follow below steps
+1. Clone the repo
+   ```sh
+   git clone https://github.com/Quasit/home_budget_app.git
+   ```
+2. Compose docker containers
+    ```docker
+    docker compose up -d
+    ```
+3. App is available in your browser at <a href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a>
+   
+4. When you will want to stop application use docker compose down
+    ```docker
+    docker compose down
+    ```
+
 ### Locally
 To run application locally follow below steps
 
@@ -113,22 +130,6 @@ To run application locally follow below steps
    ```
 8. App is available in your browser at <a href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a>
 
-### Docker
-To run application using docker containers follow below steps
-1. Clone the repo
-   ```sh
-   git clone https://github.com/Quasit/home_budget_app.git
-   ```
-2. Compose docker containers
-    ```docker
-    docker compose up -d
-    ```
-3. App is available in your browser at <a href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a>
-   
-4. When you will want to stop application use docker compose down
-    ```docker
-    docker compose down
-    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

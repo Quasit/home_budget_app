@@ -15,14 +15,15 @@ def create_app(test_config=None):
     
     if test_config is None:
         # if run on docker load environment config variables
-        if os.environ.get('ENVIRONMENT') == 'docker':
+        if os.environ.get('ENVIRONMENT') == 'docker' or os.environ.get('ENVIRONMENT') == 'kubernetes':
             app.config.from_prefixed_env()
             # check if all data needed to set up postgres connection is not empty
             if os.environ.get('POSTGRES_USER') and os.environ.get('POSTGRES_PASSWORD') and os.environ.get('POSTGRES_HOST'):
-                app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@{}:5432/home_budget'.format(
+                app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@{}:{}/home_budget'.format(
                     os.environ.get('POSTGRES_USER'),
                     os.environ.get('POSTGRES_PASSWORD'),
-                    os.environ.get('POSTGRES_HOST'))
+                    os.environ.get('POSTGRES_HOST'),
+                    os.environ.get('POSTGRES_PORT'))
             else:
                 raise RuntimeError("The environment variables for  is not set")
             
