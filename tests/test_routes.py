@@ -323,6 +323,7 @@ def test_budget_summary_get_this_year_summary(client_logged_usr1):
 @pytest.mark.budget_summary
 def test_budget_summary_get_one_year_period_summary(client_logged_usr1):
     response = client_logged_usr1.get('/budget/1')
+    response_to_file(response)
     assert '<td id="one_year_period-balance-expenses_total">180.01 zł</td>'.encode() in response.data
     assert '<td id="one_year_period-expenses-expenses_total">180.01 zł</td>'.encode() in response.data
     assert '<td id="one_year_period-expenses-category_name">test_category2</td>'.encode() in response.data
@@ -402,7 +403,7 @@ def test_add_expense_get(client_logged_usr1):
     assert '<td><label for="amount">Kwota</label></td>'.encode() in response.data
     assert '<td><input id="amount" name="amount" required step="0.01" type="text" value=""></td>'.encode() in response.data
     assert '<td><label for="date">Data</label></td>'.encode() in response.data
-    assert '<td><input id="date" name="date" required type="text" value=""></td>'.encode() in response.data
+    assert '<td><input id="date" name="date" required type="date" value=""></td>'.encode() in response.data
     assert '<td><label for="payer">Płaci</label></td>'.encode() in response.data
     assert '<td><select id="payer" name="payer" required><option value="test_user">test_user</option><option value="second_test_user">second_test_user</option><option value="third_test_user">third_test_user</option><option value="fourth_test_user">fourth_test_user</option><option value="fifth_test_user">fifth_test_user</option></select></td>'.encode() in response.data
     assert '<td><label for="used_by">Używa</label></td>'.encode() in response.data
@@ -512,7 +513,7 @@ def test_edit_expense_get(client_logged_usr1):
     assert '<td><label for="amount">Kwota</label></td>'.encode() in response.data
     assert '<td><input id="amount" name="amount" required step="0.01" type="text" value="30.00"></td>'.encode() in response.data
     assert '<td><label for="date">Data</label></td>'.encode() in response.data
-    assert '<td><input id="date" name="date" required type="text" value="2022-06-30"></td>'.encode() in response.data
+    assert '<td><input id="date" name="date" required type="date" value="2022-06-30"></td>'.encode() in response.data
     assert '<td><label for="payer">Płaci</label></td>'.encode() in response.data
     assert '<td><select id="payer" name="payer" required><option selected value="test_user">test_user</option><option value="second_test_user">second_test_user</option><option value="third_test_user">third_test_user</option><option value="fourth_test_user">fourth_test_user</option><option value="fifth_test_user">fifth_test_user</option></select></td>'.encode() in response.data
     assert '<td><label for="used_by">Używa</label></td>'.encode() in response.data
