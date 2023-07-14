@@ -91,11 +91,15 @@ To run application locally follow below steps
     ```sh
     python -m venv .venv
     ```
-3. Install requirements
+4. Activate venv with powershell
+  ```sh
+  .\.venv\Scripts\Activate.ps1
+  ```
+5. Install requirements
    ```sh
-   pip install requirements.txt
+   pip install -r requirements.txt
    ```
-4. Create `config.py` in /script folder and fill it up as below:
+6. Create `config.py` in /script folder and fill it up as below:
    ```python
     class DevelopmentConfig():
         TESTING = False
@@ -103,11 +107,11 @@ To run application locally follow below steps
         SECRET_KEY = 'ENTER YOUR SECRET KEY'
         SQLALCHEMY_DATABASE_URI = 'sqlite:///../data/budget_database.db'
    ```
-5. Run app in using app_run.py file:
+7. Run app in using app_run.py file:
    ```sh
    python3 app_run.py
    ```
-6. App is available in your browser at <a href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a>
+8. App is available in your browser at <a href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a>
 
 ### Docker
 To run application using docker containers follow below steps
