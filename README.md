@@ -31,6 +31,9 @@
       <ul>
         <li><a href="#docker">Docker</a></li>
       </ul>
+      <ul>
+        <li><a href="#kubernetes">Kubernetes</a></li>
+      </ul>
     </li>
     <li><a href="#features">Features</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
@@ -71,6 +74,7 @@ Below are major frameworks/libraries that I used to build that project
 * Javascript
 * Pytest
 * Docker
+* Kubernetes
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -131,8 +135,10 @@ To run application locally follow below steps
 8. App is available in your browser at <a href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a>
 
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+### Kubernetes
+If you have installed Minikube check <a href="/kubernetes/README.md">Kubernetes README</a> for details
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 <!-- IMPLEMENTED FEATURES -->
@@ -178,6 +184,7 @@ Below are listed features that I have already implemented in the project
 - [x] Unit tests for routes
 - [x] Dockerfile setup
 - [x] docker-compose setup
+- [x] Kubernetes configuration files
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

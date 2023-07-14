@@ -3,6 +3,7 @@
 add_db_data.py
 templates/testing.html
 /data/postgres-db
+/data/init_db
 /data/budget_database.db
 temp.txt
 *__pycache__
@@ -14,3 +15,5 @@ tests/response_data.txt
 .coverage
 *.egg-info/
 /temp
+/kubernetes/0_postgres-secret.yaml
+/kubernetes/1_app-secret.yaml

@@ -8,7 +8,6 @@ services:
       - 5432:5432
     volumes:
       - ./data/postgres-db:/var/lib/postgresql/data
-      - ./data/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
     env_file:
       - docker.env
     healthcheck:

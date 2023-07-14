@@ -15,7 +15,7 @@ def create_app(test_config=None):
     
     if test_config is None:
         # if run on docker load environment config variables
-        if os.environ.get('ENVIRONMENT') == 'docker' or os.environ.get('ENVIRONMENT') == 'kubernetes':
+        if os.environ.get('DEPLOYMENT') == 'docker' or os.environ.get('DEPLOYMENT') == 'kubernetes':
             app.config.from_prefixed_env()
             # check if all data needed to set up postgres connection is not empty
             if os.environ.get('POSTGRES_USER') and os.environ.get('POSTGRES_PASSWORD') and os.environ.get('POSTGRES_HOST'):
