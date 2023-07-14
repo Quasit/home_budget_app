@@ -92,9 +92,9 @@ To run application locally follow below steps
     python -m venv .venv
     ```
 4. Activate venv with powershell
-  ```sh
-  .\.venv\Scripts\Activate.ps1
-  ```
+    ```sh
+    .\.venv\Scripts\Activate.ps1
+    ```
 5. Install requirements
    ```sh
    pip install -r requirements.txt
