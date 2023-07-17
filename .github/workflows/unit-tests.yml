@@ -4,8 +4,6 @@ name: Python unit tests
 on:
   push:
     branches:
-    - main
-    - tests
   pull_request:
     branches:
     - main
