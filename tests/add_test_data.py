@@ -1,4 +1,13 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+
+dates = {}
+today = datetime.today().date()
+dates[1] = today # today
+dates[2] = datetime(today.year, month=today.month, day=1).date() # same month (01 day of same month and year) (for this month period)
+dates[3] = datetime(today.year, month=1, day=1).date() # same year (01.01 to be sure) (for this year period)
+dates[4] = today - timedelta(weeks=52*2) # 2 years (as reference for only specified dates)
+dates[5] = today - timedelta(weeks=50) # minus 1 yr + 1 day (for one year period)
+
 
 def add_test_data():
     from script.models import db, User, Budget, AllowedUsers, Category, Expense, UsedBy
@@ -66,32 +75,34 @@ def add_test_data():
 
     # Test expenses only / for budget 1
 
-    date1 = datetime.today().date()
-    date2 = datetime.strptime('2022-12-30', '%Y-%m-%d').date()
-    date3 = datetime.strptime('2022-06-30', '%Y-%m-%d').date()
-    date4 = datetime.strptime('1999-01-01', '%Y-%m-%d').date()
-    date5 = datetime.strptime('2021-06-15', '%Y-%m-%d').date()
+    """
+    dates[1] = today
+    dates[2] = same month (yar=same as today, month=same as today, day=1) (for this month period)
+    dates[3] = same year (year=same as today, month=1, day=1) (for this year period)
+    dates[4] = minus 2 years from today (as reference for only specified dates)
+    dates[5] = minus almost 1 year = -50 weeks = -350 days (for one year period)
+    """
 
     expense1 = Expense(name='test_expense1', description='test_expense_1_description', budget_id=budget1.id,
-                            category_id=category1.id, date=date1, amount='100.01', payer=user1.id)
+                            category_id=category1.id, date=dates[1], amount='100.01', payer=user1.id)
     
     expense2 = Expense(name='test_expense2', description='test_expense_2_description', budget_id=budget1.id,
-                            category_id=category1.id, date=date2, amount='50.00', payer=user2.id)
+                            category_id=category1.id, date=dates[2], amount='50.00', payer=user2.id)
     
     expense3 = Expense(name='test_expense3', description='test_expense_3_description', budget_id=budget1.id,
-                            category_id=category2.id, date=date3, amount='30.00', payer=user1.id)
+                            category_id=category2.id, date=dates[3], amount='30.00', payer=user1.id)
     
     expense4 = Expense(name='test_expense4', description='test_expense_4_description', budget_id=budget1.id,
-                            category_id=category1.id, date=date5, amount='2000.00', payer=user1.id)
+                            category_id=category1.id, date=dates[5], amount='2000.00', payer=user1.id)
     
     expense5 = Expense(name='test_expense5', description='test_expense_5_description', budget_id=budget1.id,
-                            category_id=category1.id, date=date5, amount='150.00', payer=user2.id)
+                            category_id=category1.id, date=dates[5], amount='150.00', payer=user2.id)
     
     expense6 = Expense(name='test_expense6', description='test_expense_6_description', budget_id=budget1.id,
-                            category_id=category2.id, date=date5, amount='180.00', payer=user1.id)
+                            category_id=category2.id, date=dates[5], amount='180.00', payer=user1.id)
     
     expense7 = Expense(name='test_expense7', description='test_expense_7_description', budget_id=budget1.id,
-                            category_id=category2.id, date=date4, amount='200.00', payer=user2.id)
+                            category_id=category2.id, date=dates[4], amount='200.00', payer=user2.id)
     
     expenses = [expense1, expense2, expense3, expense4, expense5, expense6, expense7]
 

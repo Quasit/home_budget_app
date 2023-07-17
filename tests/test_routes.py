@@ -3,6 +3,7 @@ from script.functions import get_expenses
 import pytest
 from datetime import datetime, timedelta
 import re
+from tests.add_test_data import dates
 
 def response_to_file(response):
     with open("tests/response_data.txt", "w") as response_file:
@@ -305,39 +306,56 @@ def test_budget_summary_get_budget_menu(client_logged_usr1):
 @pytest.mark.budget_summary
 def test_budget_summary_get_this_month_summary(client_logged_usr1):
     response = client_logged_usr1.get('/budget/1')
-    assert '<td id="this_month-balance-expenses_total">100.01 zł</td>'.encode() in response.data
-    assert '<td id="this_month-expenses-expenses_total">100.01 zł</td>'.encode() in response.data
-    assert '<td id="this_month-expenses-category_name">test_category1</td>'.encode() in response.data
-    assert '<td id="this_month-expenses-category_total">100.01 zł</td>'.encode() in response.data
+    if datetime.today().date().month == 1:
+        # Case when tests run on Jan
+        assert '<td id="this_month-balance-expenses_total">180.01 zł</td>'.encode() in response.data
+        assert '<td id="this_month-expenses-expenses_total">180.01 zł</td>'.encode() in response.data
+        assert '<td id="this_month-expenses-category_name">test_category1</td>'.encode() in response.data
+        assert '<td id="this_month-expenses-category_total">150.01 zł</td>'.encode() in response.data
+        assert '<td id="this_month-expenses-category_name">test_category2</td>'.encode() in response.data
+        assert '<td id="this_month-expenses-category_total">30.00 zł</td>'.encode() in response.data
+    else:
+        # Standard case, when tests don't run in Jan
+        assert '<td id="this_month-balance-expenses_total">150.01 zł</td>'.encode() in response.data
+        assert '<td id="this_month-expenses-expenses_total">150.01 zł</td>'.encode() in response.data
+        assert '<td id="this_month-expenses-category_name">test_category1</td>'.encode() in response.data
+        assert '<td id="this_month-expenses-category_total">150.01 zł</td>'.encode() in response.data
 
 
 @pytest.mark.budget_summary
 def test_budget_summary_get_this_year_summary(client_logged_usr1):
     response = client_logged_usr1.get('/budget/1')
-    assert '<td id="this_year-balance-expenses_total">100.01 zł</td>'.encode() in response.data
-    assert '<td id="this_year-expenses-expenses_total">100.01 zł</td>'.encode() in response.data
+    assert '<td id="this_year-balance-expenses_total">180.01 zł</td>'.encode() in response.data
+    assert '<td id="this_year-expenses-expenses_total">180.01 zł</td>'.encode() in response.data
     assert '<td id="this_year-expenses-category_name">test_category1</td>'.encode() in response.data
-    assert '<td id="this_year-expenses-category_total">100.01 zł</td>'.encode() in response.data
+    assert '<td id="this_year-expenses-category_total">150.01 zł</td>'.encode() in response.data
+    assert '<td id="this_year-expenses-category_name">test_category2</td>'.encode() in response.data
+    assert '<td id="this_year-expenses-category_total">30.00 zł</td>'.encode() in response.data
 
 
 @pytest.mark.budget_summary
 def test_budget_summary_get_one_year_period_summary(client_logged_usr1):
     response = client_logged_usr1.get('/budget/1')
-    response_to_file(response)
-    assert '<td id="one_year_period-balance-expenses_total">180.01 zł</td>'.encode() in response.data
-    assert '<td id="one_year_period-expenses-expenses_total">180.01 zł</td>'.encode() in response.data
-    assert '<td id="one_year_period-expenses-category_name">test_category2</td>'.encode() in response.data
-    assert '<td id="one_year_period-expenses-category_total">30.00 zł</td>'.encode() in response.data
+    assert '<td id="one_year_period-balance-expenses_total">2510.01 zł</td>'.encode() in response.data
+    assert '<td id="one_year_period-expenses-expenses_total">2510.01 zł</td>'.encode() in response.data
     assert '<td id="one_year_period-expenses-category_name">test_category1</td>'.encode() in response.data
-    assert '<td id="one_year_period-expenses-category_total">150.01 zł</td>'.encode() in response.data
+    assert '<td id="one_year_period-expenses-category_total">2300.01 zł</td>'.encode() in response.data
+    assert '<td id="one_year_period-expenses-category_name">test_category2</td>'.encode() in response.data
+    assert '<td id="one_year_period-expenses-category_total">210.00 zł</td>'.encode() in response.data
 
 
 @pytest.mark.budget_summary
 def test_budget_summary_get_chart_script(client_logged_usr1):
     response = client_logged_usr1.get('/budget/1')
-    assert 'buildChart("chart_current_month", [\'test_category1\'], [100.01], [\'#ffffff\'])'.encode() in response.data
-    assert 'buildChart("chart_current_year", [\'test_category1\'], [100.01], [\'#ffffff\'])'.encode() in response.data
-    assert 'buildChart("chart_one_year_period", [\'test_category2\', \'test_category1\'], [30.0, 150.01], [\'#000000\', \'#ffffff\'])'.encode() in response.data
+    if datetime.today().date().month == 1:
+        # Case when tests run on Jan
+        assert 'buildChart("chart_current_month", [\'test_category2\', \'test_category1\'], [30.0, 150.01], [\'#000000\', \'#ffffff\'])'.encode() in response.data
+    else:
+        # Standard case, when tests don't run in Jan
+        assert 'buildChart("chart_current_month", [\'test_category1\'], [150.01], [\'#ffffff\'])'.encode() in response.data
+
+    assert 'buildChart("chart_current_year", [\'test_category2\', \'test_category1\'], [30.0, 150.01], [\'#000000\', \'#ffffff\'])'.encode() in response.data
+    assert 'buildChart("chart_one_year_period", [\'test_category1\', \'test_category2\'], [2300.01, 210.0], [\'#ffffff\', \'#000000\'])'.encode() in response.data
 
 
 # ----------------------------
@@ -513,7 +531,7 @@ def test_edit_expense_get(client_logged_usr1):
     assert '<td><label for="amount">Kwota</label></td>'.encode() in response.data
     assert '<td><input id="amount" name="amount" required step="0.01" type="text" value="30.00"></td>'.encode() in response.data
     assert '<td><label for="date">Data</label></td>'.encode() in response.data
-    assert '<td><input id="date" name="date" required type="date" value="2022-06-30"></td>'.encode() in response.data
+    assert ('<td><input id="date" name="date" required type="date" value="' + str(dates[3]) + '"></td>').encode() in response.data
     assert '<td><label for="payer">Płaci</label></td>'.encode() in response.data
     assert '<td><select id="payer" name="payer" required><option selected value="test_user">test_user</option><option value="second_test_user">second_test_user</option><option value="third_test_user">third_test_user</option><option value="fourth_test_user">fourth_test_user</option><option value="fifth_test_user">fifth_test_user</option></select></td>'.encode() in response.data
     assert '<td><label for="used_by">Używa</label></td>'.encode() in response.data

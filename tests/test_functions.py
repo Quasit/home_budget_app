@@ -7,6 +7,7 @@ from script.functions import (sort_func, random_color, get_allowed_budgets_list,
                             get_used_by_long, get_categories_dict, get_expenses,
                             get_default_period_dates, get_expenses_from_period,
                             get_expense_summary, get_allowed_users_ids)
+from tests.add_test_data import dates
 
 
 def test_sort_func():
@@ -108,7 +109,7 @@ def test_get_expenses(app_ctx):
         "id": 1,
         "name": 'test_expense1',
         "description": 'test_expense_1_description',
-        "date": datetime.today().date(),
+        "date": dates[1],
         "category_id": 1,
         "category_name": 'test_category1',
         "category_description": 'test_category_1_description',
@@ -123,7 +124,7 @@ def test_get_expenses(app_ctx):
         "id": 7,
         "name": 'test_expense7',
         "description": 'test_expense_7_description',
-        "date": datetime.strptime('1999-01-01', '%Y-%m-%d').date(),
+        "date": dates[4],
         "category_id": 2,
         "category_name": 'test_category2',
         "category_description": 'test_category_2_description',
@@ -193,31 +194,46 @@ def test_get_expenses_from_period(app_ctx):
 
     today_expenses = get_expenses_from_period(1, datetime.today().date(), datetime.today().date())
 
-    assert len(today_expenses) == 1
-    assert today_expenses[0][0].name == 'test_expense1'
-    assert today_expenses[0][1].name == 'test_category1'
+    if datetime.today().date().day == 1 and datetime.today().date().month == 1:
+        # Case when tests run on Jan 1st
+        assert len(today_expenses) == 3
+        assert today_expenses[0][0].name == 'test_expense1'
+        assert today_expenses[0][1].name == 'test_category1'
+        assert today_expenses[1][0].name == 'test_expense2'
+        assert today_expenses[1][1].name == 'test_category1'
+        assert today_expenses[2][0].name == 'test_expense3'
+        assert today_expenses[2][1].name == 'test_category2'
+    elif datetime.today().date().day == 1 and datetime.today().date().month != 1:
+        # Case when test are run on 1st day of month, but not January
+        assert len(today_expenses) == 3
+        assert today_expenses[0][0].name == 'test_expense1'
+        assert today_expenses[0][1].name == 'test_category1'
+        assert today_expenses[1][0].name == 'test_expense2'
+        assert today_expenses[1][1].name == 'test_category1'
+    else:
+        # Standard case, when tests are not 1st day of month or 1st day of year
+        assert len(today_expenses) == 1
+        assert today_expenses[0][0].name == 'test_expense1'
+        assert today_expenses[0][1].name == 'test_category1'
 
-    # Three expenses have date : 2021-06-15
+    # Three expenses have dates[5] set as date
 
-    date = datetime.strptime('2021-06-15', '%Y-%m-%d').date()
-
-    expenses = get_expenses_from_period(1, date, date)
+    expenses = get_expenses_from_period(1, dates[5], dates[5])
 
     assert len(expenses) == 3
 
-    # One expense have date : 2022-06-30
-    date2 = datetime.strptime('2022-06-30', '%Y-%m-%d').date()
-    expenses2 = get_expenses_from_period(1, date, date2)
+    # One expense have dates[4] set as date
+    expenses2 = get_expenses_from_period(1, dates[4], dates[5])
 
     assert len(expenses2) == 4
 
     with pytest.raises(Exception) as begin_date_bigger_case:
-        get_expenses_from_period(1, date2, date)
+        get_expenses_from_period(1, dates[5], dates[4])
     assert str(begin_date_bigger_case.value) == "begin_date cannot be higher than the end_date"
 
 
 def test_get_expense_summary(app_ctx):
-    begin_1 = datetime.strptime('1999-01-01', '%Y-%m-%d').date()
+    begin_1 = dates[4]
     end_1 = datetime.today().date()
 
     expenses_list_1 = get_expenses_from_period(1, begin_1, end_1)

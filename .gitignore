@@ -14,3 +14,4 @@ tests/response_data.txt
 .coverage
 *.egg-info/
 /temp
+/kubernetes
